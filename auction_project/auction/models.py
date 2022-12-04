@@ -9,7 +9,22 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    pass
+    
+    def __str__(self) -> str:
+        return("ID : " + str(self.id) + ", Username : " + self.username + ", Fname : " + self.first_name + ", Sname : " + self.last_name)  
+
+    def to_dict(self) -> dict:
+        """Returns a dictionary of item contents"""
+
+        return {
+            'id': self.id,
+            'username': self.username,
+            'fname' : self.first_name,
+            'sname': self.last_name,
+            'email' : self.email
+
+        } 
+    
 
 class Item(models.Model):
     name = models.CharField(max_length=255)
@@ -25,6 +40,22 @@ class Item(models.Model):
     def __str__(self):
         #return ("ID : " + str(self.id) + ", Name : " + self.name + ", Condition : " + self.condition + ", Price : " + str(self.price) + ", Start : " + str(self.start) + ", End : " + str(self.end) + ", Sold : " + str(self.sold) + ", Owner : " + str(self.owner))        
         return ("ID : " + str(self.id) + ", Name : " + self.name)
+
+    def to_dict(self) ->dict:
+        """Returns a dictionary of item contents"""
+
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'condition': self.condition,
+            'price': self.price,
+            'start': self.start,
+            'end':self.end,
+            'picture':self.picture,
+            'sold':self.sold,
+            'owner':self.owner.to_dict()
+        }
     
 class Bid(models.Model):
     bidder = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -40,10 +71,9 @@ class Bid(models.Model):
         """Returns a dictionary of Bid contents"""
         return {
             'id': self.id,
-            'bidder': self.bidder,
-            'item': self.item,
-            'start': self.start,
-            'end': self.end,
+            'bidder': self.bidder.to_dict(),
+            'item': self.item.to_dict(),
+            'time': self.time,
             'amount':self.amount,
         }
 
@@ -66,7 +96,7 @@ class Question(models.Model):
             'title': self.title,
             'description': self.description,
             'response': self.response,
-            'item': self.item,
-            'questioner':self.questioner,
+            'item': self.item.to_dict(),
+            'questioner':self.questioner.to_dict(),
         }
 
