@@ -90,21 +90,7 @@ export default {
             })
 
         },
-        // storeImage(e:any) {
-        //     var files = e.target.files || e.dataTransfer.files;
-        //     if (!files.length)
-        //         return;
-        //     this.createImage(files[0]);
-        // },
-        // createImage(file:any) {
-        //     var picture = new Image();
-        //     var reader = new FileReader();
 
-        //     reader.onload = (e:any) => {
-        //         this.picture = e.target?.result;
-        //     };
-        //     reader.readAsDataURL(file);
-        // }
         async storeImage(e:any){
             const file = e.target.files[0];
             this.prev = URL.createObjectURL(file);  //creates a blob image (to preview image)
