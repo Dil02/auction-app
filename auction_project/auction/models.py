@@ -9,6 +9,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+
+    #picture = models.CharField(max_length=255)
     
     def __str__(self) -> str:
         return("ID : " + str(self.id) + ", Username : " + self.username + ", Fname : " + self.first_name + ", Sname : " + self.last_name)  

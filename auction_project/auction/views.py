@@ -49,14 +49,14 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
         body = json.loads(request.body)
         data = body["data"]
         username = data["username"]
-        password = data["password"]
+        #password = data["password"]
         email = data["email"]
         fname = data["fname"]
         sname = data["sname"]
 
         #Data of user object is reassigned to passed values
         user.username = username
-        user.password = password
+        #user.password = password
         user.email = email
         user.first_name = fname 
         user.last_name = sname 
