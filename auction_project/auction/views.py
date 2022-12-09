@@ -69,32 +69,32 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
     return HttpResponse("")
 
 
-@csrf_exempt
-def items_api(request : HttpRequest) ->JsonResponse:
-    """API handling all items. GET request returns JSON of all objects. POST request adds new item record and returns it."""
-    if request.method == 'GET':
-        return JsonResponse({
-            'items': [
-                item.to_dict()
-                for item in Item.objects.all()
-            ]
-        })
+# @csrf_exempt
+# def items_api(request : HttpRequest) ->JsonResponse:
+#     """API handling all items. GET request returns JSON of all objects. POST request adds new item record and returns it."""
+#     if request.method == 'GET':
+#         return JsonResponse({
+#             'items': [
+#                 item.to_dict()
+#                 for item in Item.objects.all()
+#             ]
+#         })
 
-    elif request.method == 'POST':
-        body = json.loads(request.body)
-        data = body["data"]
-        name = data["name"]
-        description = data["description"]
-        condition = data["condition"]
-        price = data["price"]
-        start = data["start"]
-        end = data["end"]
-        picture = data["picture"]
-        sold = data["sold"]
-        ownerID = data["owner"]
-        owner = get_object_or_404(User, id=ownerID)
-        item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
-        return JsonResponse(item.to_dict())
+#     elif request.method == 'POST':
+#         body = json.loads(request.body)
+#         data = body["data"]
+#         name = data["name"]
+#         description = data["description"]
+#         condition = data["condition"]
+#         price = data["price"]
+#         start = data["start"]
+#         end = data["end"]
+#         picture = data["picture"]
+#         sold = data["sold"]
+#         ownerID = data["owner"]
+#         owner = get_object_or_404(User, id=ownerID)
+#         item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
+#         return JsonResponse(item.to_dict())
 
 @csrf_exempt
 def item_api(request : HttpRequest, itemID : int)->JsonResponse:
