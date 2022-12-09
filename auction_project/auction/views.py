@@ -49,14 +49,14 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
         body = json.loads(request.body)
         data = body["data"]
         username = data["username"]
-        password = data["password"]
+        #password = data["password"]
         email = data["email"]
         fname = data["fname"]
         sname = data["sname"]
 
         #Data of user object is reassigned to passed values
         user.username = username
-        user.password = password
+        #user.password = password
         user.email = email
         user.first_name = fname 
         user.last_name = sname 
@@ -69,32 +69,32 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
     return HttpResponse("")
 
 
-# @csrf_exempt
-# def items_api(request : HttpRequest) ->JsonResponse:
-#     """API handling all items. GET request returns JSON of all objects. POST request adds new item record and returns it."""
-#     if request.method == 'GET':
-#         return JsonResponse({
-#             'items': [
-#                 item.to_dict()
-#                 for item in Item.objects.all()
-#             ]
-#         })
+@csrf_exempt
+def items_api(request : HttpRequest) ->JsonResponse:
+    """API handling all items. GET request returns JSON of all objects. POST request adds new item record and returns it."""
+    if request.method == 'GET':
+        return JsonResponse({
+            'items': [
+                item.to_dict()
+                for item in Item.objects.all()
+            ]
+        })
 
-#     elif request.method == 'POST':
-#         body = json.loads(request.body)
-#         data = body["data"]
-#         name = data["name"]
-#         description = data["description"]
-#         condition = data["condition"]
-#         price = data["price"]
-#         start = data["start"]
-#         end = data["end"]
-#         picture = data["picture"]
-#         sold = data["sold"]
-#         ownerID = data["owner"]
-#         owner = get_object_or_404(User, id=ownerID)
-#         item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
-#         return JsonResponse(item.to_dict())
+    elif request.method == 'POST':
+        body = json.loads(request.body)
+        data = body["data"]
+        name = data["name"]
+        description = data["description"]
+        condition = data["condition"]
+        price = data["price"]
+        start = data["start"]
+        end = data["end"]
+        picture = data["picture"]
+        sold = data["sold"]
+        ownerID = data["owner"]
+        owner = get_object_or_404(User, id=ownerID)
+        item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
+        return JsonResponse(item.to_dict())
 
 @csrf_exempt
 def item_api(request : HttpRequest, itemID : int)->JsonResponse:
@@ -278,34 +278,3 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
         })
 
     return HttpResponse("")
-import json
-from auction.models import Item
-
-from django.http import HttpResponse, HttpRequest, JsonResponse
-
-# Create your views here.
-
-@csrf_exempt
-def items_api(request):
-    if request.method == "POST":
-        # gets the json data from the frontend
-        data = json.loads(request.body)
-        # Creates new object and adds it to the existing object
-        Item.objects.create(
-            condition=data['Type'],
-            name=data['name'],
-            description=data['description'],
-            start=data['start'],
-            price=data['price'],
-            end=data['end'],
-            picture=data['picture']
-        )
-    return JsonResponse({
-        'Item': [
-            # Gives the data for the object
-            Item.to_dict()
-            # Transportation.object.all() gets all the transportation objects
-            for Item in Item.objects.all()
-
-        ]
-    })
