@@ -11,6 +11,7 @@ urlpatterns = [
     #Item API paths
     path('api/items/', views.items_api, name="items"),
     path('api/items/<int:itemID>/', views.item_api, name="item"),
+    #path('api/availableItems/', views.available_items, name="available"),
 
     #Bid API paths
     path('api/bids/', views.bids_api, name="bids"),
