@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest, JsonResponse, HttpResponse
+from django.contrib.auth.forms import UserCreationForm
 import json
 from .models import *
 # Create your views here.
@@ -278,3 +279,20 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
         })
 
     return HttpResponse("")
+
+@csrf_exempt
+def registerPage(request):
+    form = UserCreationForm()
+    
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+    
+    context = {'form':form}
+    return render(request, 'accounts/register.html', context)
+
+@csrf_exempt
+def loginPage(request):
+    context = {}
+    return render(request, 'accounts/login.html', context)
