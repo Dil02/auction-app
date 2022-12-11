@@ -10,7 +10,10 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
 
-    #picture = models.CharField(max_length=255)
+    city = models.CharField(max_length=255,blank=True, null=True)
+    dob = models.DateField(blank=True, null=True)
+    picture = models.ImageField(upload_to="profileimages/", blank=True, null=True)
+
     
     def __str__(self) -> str:
         return("ID : " + str(self.id) + ", Username : " + self.username + ", Fname : " + self.first_name + ", Sname : " + self.last_name)  
@@ -23,7 +26,9 @@ class User(AbstractUser):
             'username': self.username,
             'fname' : self.first_name,
             'sname': self.last_name,
-            'email' : self.email
+            'email' : self.email,
+            'city' : self.city,
+            'dob' : self.dob
 
         } 
     

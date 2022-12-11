@@ -53,6 +53,9 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
         email = data["email"]
         fname = data["fname"]
         sname = data["sname"]
+        dob = data["dob"]
+        city = data["city"]
+
 
         #Data of user object is reassigned to passed values
         user.username = username
@@ -60,6 +63,8 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
         user.email = email
         user.first_name = fname 
         user.last_name = sname 
+        user.dob = dob
+        user.city = city
         user.save()
 
         return JsonResponse({
