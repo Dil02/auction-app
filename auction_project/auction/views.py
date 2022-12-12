@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 import json
 from .models import *
 from datetime import date
@@ -300,6 +301,7 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
 
 @csrf_exempt
 def registerPage(request):
+    User = get_user_model()
     form = UserCreationForm()
     
     if request.method == 'POST':
