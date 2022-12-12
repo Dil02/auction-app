@@ -81,18 +81,7 @@ class Item(models.Model):
             'sold':self.sold,
             'owner':self.owner.to_dict()
         }
-    
-    def to_dict(self):
-        """Returns a dictionary of Bid contents"""
-        return {
-            'name':self.name,
-            'price': self.price,
-            'Type': self.Type,
-            'condition': self.condition,
-            'start': self.start,
-            'end': self.end,
-            'picture':self.picture,
-        }
+
 class Bid(models.Model):
     bidder = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)

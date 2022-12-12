@@ -1,37 +1,76 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-
-defineProps<{ msg: string }>()
-
-const count = ref(0)
-</script>
 
 <template>
-  <h1>{{ msg }}</h1>
+  <div class="mainContainer">
 
-  <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
+    <div class="input-group mb-3 search">
+      <input id="searchBar" type="text" class="form-control" placeholder="Search" @keyup.enter="searchItems">
+      <button @click="searchItems" class="btn btn-outline-secondary" type="button">Search</button>
+    </div>
+
+    <ItemComponent v-for="item in items" :item="item" />
   </div>
 
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank">create-vue</a>, the official Vue + Vite
-    starter
-  </p>
-  <p>
-    Install
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-    in your IDE for a better DX
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 </template>
 
+
+<script>
+import ItemComponent from './ItemComponent.vue';
+
+export default {
+  components: {
+    ItemComponent,
+  },
+
+  data() {
+    return {
+      items: [],
+    };
+  },
+  async mounted() {
+    let response = await fetch("http://127.0.0.1:8000/api/available/");
+    let data = await response.json();
+    this.items = data.items;
+
+  },
+
+  methods: {
+    async fetchItems(query = "") {
+      let response;
+
+      if (query == "")
+        response = await fetch("http://127.0.0.1:8000/api/available/");
+      else
+        response = await fetch("http://127.0.0.1:8000/api/available/" + query + "/");
+
+      let data = await response.json();
+      this.items = data.items;
+    },
+
+    async searchItems() {
+      let query = document.getElementById('searchBar').value;
+      this.fetchItems(query);
+    }
+  },
+
+}
+
+</script>
+
 <style scoped>
-.read-the-docs {
-  color: #888;
+.search {
+  margin-left: 5em;
+  margin-right: 5em;
+  margin-top: 2em;
+}
+
+.search button {
+  background-color: green;
+  color: white;
+}
+
+.mainContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 </style>

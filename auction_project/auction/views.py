@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest, JsonResponse, HttpResponse
 import json
 from .models import *
+from datetime import date
 # Create your views here.
 
 #Note : 1. get_object_or_404 will mean 404 will happen if an object can't be found with its ID
@@ -148,8 +149,21 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
 
     return HttpResponse("")
 
+@csrf_exempt
+def available_items(request:HttpRequest, query:str="")->JsonResponse:
 
+    today = date.today()
+    if query == "":
+        available = Item.objects.filter(start__lte=today).filter(end__gte=today).filter(sold=False)
+    else:
+        available = Item.objects.filter(start__lte=today).filter(end__gte=today).filter(sold=False).filter(name__startswith=query)
 
+    return JsonResponse({
+        'items': [
+            item.to_dict()
+            for item in available
+        ]
+    })
 
 
 @csrf_exempt
