@@ -153,10 +153,9 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
 def available_items(request:HttpRequest, query:str="")->JsonResponse:
 
     today = date.today()
-    if query == "":
-        available = Item.objects.filter(start__lte=today).filter(end__gte=today).filter(sold=False)
-    else:
-        available = Item.objects.filter(start__lte=today).filter(end__gte=today).filter(sold=False).filter(name__startswith=query)
+    available = Item.objects.filter(start__lte=today).filter(end__gte=today).filter(sold=False)
+    if query != "":
+        available = available.filter(name__contains=query) | available.filter(description__contains=query)
 
     return JsonResponse({
         'items': [
