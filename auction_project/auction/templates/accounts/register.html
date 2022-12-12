@@ -1,9 +1,20 @@
-<h3>Register</h3>
+{% block content %}
 
-
-<form method="POST" action="">
+<h2>Register<h2>
+<form method="POST">
     {% csrf_token %}
-    {{form.as_p}}
 
-    <input type="submit" name="Create User">
+    {% for field in registration_form %}
+
+        <p>
+            {{field.label_tag}}
+            {{field}}
+        </p>
+
+    {% endfor %}
+
+    <button type="submit">Register</button>
 </form>
+
+
+{% endblock content %}

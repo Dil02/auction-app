@@ -1,8 +1,9 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login, authenticate
+from auction.forms import RegistrationForm
 import json
 from .models import *
 from datetime import date
@@ -301,15 +302,21 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
 
 @csrf_exempt
 def registerPage(request):
-    User = get_user_model()
-    form = UserCreationForm()
-    
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+    context = {}
+    if request.POST:
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-    
-    context = {'form':form}
+            email = form.cleaned_data.get('email')
+            raw_password = form.cleaned_data.get('password1')
+            account = authenticate(email=email, password=raw_password)
+            login(request, account)
+            return redirect('register')
+        else:
+            context['registration_form'] = form
+    else:
+        form = RegistrationForm()
+        context['registration_form'] = form
     return render(request, 'accounts/register.html', context)
 
 @csrf_exempt
