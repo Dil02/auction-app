@@ -4,6 +4,10 @@ from . import views
 urlpatterns = [
     #path('', views.index, name='index'),
 
+    #User Account paths
+    path('register/', views.registerPage, name="register"),
+    path('login/', views.loginPage, name="login"),
+    
     #User API paths
     path('api/users/', views.users_api, name="items"),
     path('api/users/<int:userID>/', views.user_api, name="item"),
