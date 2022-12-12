@@ -6,6 +6,7 @@ const routes=[
     {path:'/item',name:"item",component:() => import('./components/AddItem.vue')},
     {path:'/helloWorld',name:"home",component:() => import('./components/HelloWorld.vue')},
     {path: '/profile', name:"profile",component:() => import('./components/Profile.vue')},
+    {path: '/yo', name:"test",component:() => import('./components/questionAnswer.vue')},//Test
 
 
 ]
