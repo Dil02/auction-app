@@ -19,4 +19,7 @@ urlpatterns = [
     #Question paths
     path('api/questions/', views.questions_api, name="questions"),
     path('api/questions/<int:questionID>/', views.question_api, name="question"),
+
+    #Profile paths
+    path('api/profile/<int:userID>', views.profile_api, name="profile"),
 ]

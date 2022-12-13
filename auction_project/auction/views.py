@@ -283,3 +283,18 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
         })
 
     return HttpResponse("")
+
+@csrf_exempt
+def profile_api(request: HttpRequest, userID : int)->JsonResponse:        
+    """API handling of profile picture."""
+    user = get_object_or_404(User, id=userID)
+    if request.method == 'POST':
+        uploaded_file = request.FILES['myFile']
+        user.picture=uploaded_file
+        user.save()
+
+        return JsonResponse({
+            'filename' : uploaded_file.name
+        })
+
+    return HttpResponse("")

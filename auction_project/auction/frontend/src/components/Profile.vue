@@ -33,9 +33,13 @@
                 </div>
             </div>
             <div class="col-sm-8">
-                <!-- <img src="..." alt="..." class="img-thumbnail"></img> -->
-                <input type="file" accept="image/*" id="pictureUpload">
-                <button @click="createImage()">Submit</button>
+                <img v-bind:src="'http://localhost:8000' + userDetails.picture" height="350" width="350" alt="Press 'View Profile'">
+
+                <form v-bind:action="'http://localhost:8000/api/profile/' + 1" method="POST" enctype="multipart/form-data" class="mt-2">
+                    <input type="file" accept="image/*" name="myFile">
+                    <input type="submit">
+                </form>
+
             </div>
         </div>
         <div class="row">
@@ -85,18 +89,6 @@ export default {
       this.updatedAt = data.updatedAt;
       this.fetchUserDetails()
     },
-    async createImage()
-    {
-        const imageInput = document.getElementById("pictureUpload")
-        let image = imageInput.files[0]
-        console.log(image)
-
-        let formData= new FormData()
-
-        formData.append('picture',image)
-        let newImage = fetch("http://localhost:8000/api/users/" + user_id + "/")
-
-    }
   }
 }
 

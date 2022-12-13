@@ -28,8 +28,8 @@ class User(AbstractUser):
             'sname': self.last_name,
             'email' : self.email,
             'city' : self.city,
-            'dob' : self.dob
-
+            'dob' : self.dob,
+            'picture' : self.picture.url,
         } 
     
 
