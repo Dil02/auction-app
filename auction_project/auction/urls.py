@@ -4,6 +4,12 @@ from . import views
 urlpatterns = [
     #path('', views.index, name='index'),
 
+    #User Account paths
+    path('register/', views.registerPage, name="register"),
+    path('login/', views.loginPage, name="login"),
+    path("", views.registerPage, name="home"),
+    path('logout/', views.logout_view, name="logout"),
+    
     #User API paths
     path('api/users/', views.users_api, name="items"),
     path('api/users/<int:userID>/', views.user_api, name="item"),
@@ -11,6 +17,8 @@ urlpatterns = [
     #Item API paths
     path('api/items/', views.items_api, name="items"),
     path('api/items/<int:itemID>/', views.item_api, name="item"),
+    path('api/available/', views.available_items, name="available"),
+    path('api/available/<str:query>/', views.available_items, name="available"),
 
     #Bid API paths
     path('api/bids/', views.bids_api, name="bids"),

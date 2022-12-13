@@ -36,13 +36,31 @@ class User(AbstractUser):
 class Item(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=1000)
-    condition = models.CharField(max_length=255)
+
+    NEW = 'NEW'
+    EXCELLENT = 'UE'
+    GOOD= 'UG'
+    OK='UA'
+    Type = [
+        (NEW, 'NEW'),
+        (EXCELLENT, 'USED - EXCELLENT'),
+        (GOOD, 'USED - GOOD'),
+        (OK, 'USED - ACCEPTABLE'),
+    ]
+    condition = models.CharField(
+        max_length=20,
+        choices=Type,
+        default=NEW,
+    )
+
+
+    # condition = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10,decimal_places=2)
     start = models.DateField('Start Date')
     end = models.DateField('End Date')
     picture = models.CharField(max_length=255)
     sold = models.BooleanField(default=False)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE , null=True)
 
     def __str__(self):
         #return ("ID : " + str(self.id) + ", Name : " + self.name + ", Condition : " + self.condition + ", Price : " + str(self.price) + ", Start : " + str(self.start) + ", End : " + str(self.end) + ", Sold : " + str(self.sold) + ", Owner : " + str(self.owner))        
@@ -63,7 +81,7 @@ class Item(models.Model):
             'sold':self.sold,
             'owner':self.owner.to_dict()
         }
-    
+
 class Bid(models.Model):
     bidder = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
