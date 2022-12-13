@@ -301,7 +301,7 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
     return HttpResponse("")
 
 @csrf_exempt
-def profile_api(request: HttpRequest, userID : int)->JsonResponse:        
+def profileImage_api(request: HttpRequest, userID : int)->JsonResponse:        
     """API handling of profile picture."""
     user = get_object_or_404(User, id=userID)
     if request.method == 'POST':
@@ -310,10 +310,12 @@ def profile_api(request: HttpRequest, userID : int)->JsonResponse:
         user.save()
 
         return JsonResponse({
-            'filename' : uploaded_file.name
+            'filename' : uploaded_file.name,
+
         })
 
     return HttpResponse("")
+    
 def registerPage(request):
     context = {}
     if request.POST:
