@@ -323,24 +323,36 @@ def registerPage(request):
 def loginPage(request):
     context = {}
     
-    user = request.user
-    if user.is_authenticated:
-        return redirect('register')
+    # user = request.user
+    # if user.is_authenticated:
+    #     return redirect('register')
     
-    if request.POST:
-        form = AccountAuthenticationForm(request.POST)
-        if form.is_valid():
-            email = request.POST['email']
-            password = request.POST['password']
-            user = authenticate(email=email, password=password)
+    # if request.POST:
+    #     form = AccountAuthenticationForm(request.POST)
+    #     if form.is_valid():
+    #         email = request.POST['email']
+    #         password = request.POST['password']
+    #         user = authenticate(request, email=email, password=password)
             
-            if user:
-                login(request, user)
-                return redirect('register')
-    else:
-        form = AccountAuthenticationForm()
+    #         if user:
+    #             login(request, user)
+    #             return redirect('register')
+    # else:
+    #     form = AccountAuthenticationForm()
         
-    context['login_form'] = form
+    # context['login_form'] = form
+    # return render(request, 'accounts/login.html', context)
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('register')
+        
     return render(request, 'accounts/login.html', context)
 
 def logout_view(request):
