@@ -257,7 +257,17 @@ def questions_api(request:HttpRequest)->JsonResponse:
         question = Question.objects.create(title=title, description=description,response=response,item=item,questioner=questioner)
         return JsonResponse(question.to_dict())
 
-
+@csrf_exempt
+def item_questions_api(request:HttpRequest, itemID:int)->JsonResponse:
+    """API returning questions for the ID of an item."""
+    if request.method == 'GET':
+        givenItem = get_object_or_404(Item, id=itemID)
+        return JsonResponse({
+            'questions': [
+                question.to_dict()
+                for question in Question.objects.filter(item=givenItem)
+            ]
+        })
     
 
 @csrf_exempt
