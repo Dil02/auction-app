@@ -18,7 +18,7 @@
             </div>
             <div class="form-input">
                 <h3><label class="form-label" for="price">Set Price</label></h3>
-                <input v-model="price" type="text" class="form-control" placeholder="Enter name">
+                <input v-model="price" type="text" class="form-control" placeholder="Enter value">
             </div>
             <div class="form-group">
                 <h3><label for="options">Select Condition</label></h3>
