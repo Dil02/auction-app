@@ -90,8 +90,7 @@ def items_api(request : HttpRequest) ->JsonResponse:
         })
 
     elif request.method == 'POST':
-        body = json.loads(request.body)
-        data = body["data"]
+        data = json.loads(request.body)
         name = data["name"]
         description = data["description"]
         condition = data["condition"]
@@ -100,8 +99,9 @@ def items_api(request : HttpRequest) ->JsonResponse:
         end = data["end"]
         picture = data["picture"]
         sold = data["sold"]
-        ownerID = data["owner"]
-        owner = get_object_or_404(User, id=ownerID)
+        #ownerID = data["owner"]
+        #owner = get_object_or_404(User, id=ownerID)
+        owner = User.objects.first()        
         item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
         return JsonResponse(item.to_dict())
 
@@ -120,8 +120,7 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
 
     elif request.method == "PUT":
         #Data is retrieved from request body
-        body = json.loads(request.body)
-        data = body["data"]
+        data = json.loads(request.body)
         name = data["name"]
         description = data["description"]
         condition = data["condition"]
@@ -130,9 +129,10 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
         end = data["end"]
         picture = data["picture"]
         sold = data["sold"]
-        ownerID = data["owner"]
+        #ownerID = data["owner"]
 
-        owner = get_object_or_404(User, id=ownerID)
+        #owner = get_object_or_404(User, id=ownerID)
+        owner = User.objects.first()
 
         #Data of item object is reassigned to passed values
         item.name = name
