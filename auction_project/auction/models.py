@@ -9,6 +9,11 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+
+    city = models.CharField(max_length=255,blank=True, null=True)
+    dob = models.DateField(blank=True, null=True)
+    picture = models.ImageField(upload_to="profileimages/", blank=True, null=True)
+
     
     def __str__(self) -> str:
         return("ID : " + str(self.id) + ", Username : " + self.username + ", Fname : " + self.first_name + ", Sname : " + self.last_name)  
@@ -21,7 +26,9 @@ class User(AbstractUser):
             'username': self.username,
             'fname' : self.first_name,
             'sname': self.last_name,
-            'email' : self.email
+            'email' : self.email,
+            'city' : self.city,
+            'dob' : self.dob
 
         } 
     
@@ -74,18 +81,7 @@ class Item(models.Model):
             'sold':self.sold,
             'owner':self.owner.to_dict()
         }
-    
-    def to_dict(self):
-        """Returns a dictionary of Bid contents"""
-        return {
-            'name':self.name,
-            'price': self.price,
-            'Type': self.Type,
-            'condition': self.condition,
-            'start': self.start,
-            'end': self.end,
-            'picture':self.picture,
-        }
+
 class Bid(models.Model):
     bidder = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)

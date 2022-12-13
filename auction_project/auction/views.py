@@ -1,8 +1,12 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest, JsonResponse, HttpResponse
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model, login, authenticate, logout
+from auction.forms import RegistrationForm, AccountAuthenticationForm
 import json
 from .models import *
+from datetime import date
 # Create your views here.
 
 #Note : 1. get_object_or_404 will mean 404 will happen if an object can't be found with its ID
@@ -53,6 +57,9 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
         email = data["email"]
         fname = data["fname"]
         sname = data["sname"]
+        dob = data["dob"]
+        city = data["city"]
+
 
         #Data of user object is reassigned to passed values
         user.username = username
@@ -60,6 +67,8 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
         user.email = email
         user.first_name = fname 
         user.last_name = sname 
+        user.dob = dob
+        user.city = city
         user.save()
 
         return JsonResponse({
@@ -143,8 +152,20 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
 
     return HttpResponse("")
 
+@csrf_exempt
+def available_items(request:HttpRequest, query:str="")->JsonResponse:
 
+    today = date.today()
+    available = Item.objects.filter(start__lte=today).filter(end__gte=today).filter(sold=False)
+    if query != "":
+        available = available.filter(name__contains=query) | available.filter(description__contains=query)
 
+    return JsonResponse({
+        'items': [
+            item.to_dict()
+            for item in available
+        ]
+    })
 
 
 @csrf_exempt
@@ -278,3 +299,62 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
         })
 
     return HttpResponse("")
+
+@csrf_exempt
+def registerPage(request):
+    context = {}
+    if request.POST:
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            account = form.save()
+            email1 = form.cleaned_data.get('email')
+            raw_password = form.cleaned_data.get('password1')
+            #account = authenticate(email=email1, password=raw_password)
+            login(request, account)
+            return redirect('register')
+        else:
+            context['registration_form'] = form
+    else:
+        form = RegistrationForm()
+        context['registration_form'] = form
+    return render(request, 'accounts/register.html', context)
+
+@csrf_exempt
+def loginPage(request):
+    context = {}
+    
+    # user = request.user
+    # if user.is_authenticated:
+    #     return redirect('register')
+    
+    # if request.POST:
+    #     form = AccountAuthenticationForm(request.POST)
+    #     if form.is_valid():
+    #         email = request.POST['email']
+    #         password = request.POST['password']
+    #         user = authenticate(request, email=email, password=password)
+            
+    #         if user:
+    #             login(request, user)
+    #             return redirect('register')
+    # else:
+    #     form = AccountAuthenticationForm()
+        
+    # context['login_form'] = form
+    # return render(request, 'accounts/login.html', context)
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('register')
+        
+    return render(request, 'accounts/login.html', context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('register')

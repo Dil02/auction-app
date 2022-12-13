@@ -3,11 +3,9 @@
         <div class="row">
             <div col-sm-12>
                 <h1 class="text-center">Profile Page</h1>
-                <button @click="fetchUserDetails(1)">View profile</button>
-                <button @click="updateUserDetails(1)">Update profile</button>
             </div>
         </div>
-        <div class="row mt-5">
+        <div class="row mt-2">
             <div class="col-sm-4">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control bg-light" placeholder="nameExample" id="profileUsername" v-model="userDetails.username">
@@ -26,20 +24,27 @@
                     <label for="profileEmail">Email Address</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control bg-light" placeholder="01/01/2000" id="profileDOB">
+                    <input type="text" class="form-control bg-light" placeholder="01/01/2000" id="profileDOB" v-model="userDetails.dob">
                     <label for="profileDOB">Date of Birth</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control bg-light" placeholder="London" id="profileCity">
+                    <input type="text" class="form-control bg-light" placeholder="London" id="profileCity" v-model="userDetails.city">
                     <label for="profileCity">City</label>
                 </div>
             </div>
             <div class="col-sm-8">
                 <!-- <img src="..." alt="..." class="img-thumbnail"></img> -->
-                <input type="file" accept="image/*">
-                <button>Submit</button>
+                <input type="file" accept="image/*" id="pictureUpload">
+                <button @click="createImage()">Submit</button>
             </div>
-
+        </div>
+        <div class="row">
+            <div col-sm-6>
+                <button @click="fetchUserDetails(1)">View profile</button>
+            </div>
+            <div col-sm-6>
+                <button @click="updateUserDetails(1)" class="mt-2">Update profile</button>
+            </div>
         </div>
     </div>
 </template>
@@ -71,8 +76,8 @@ export default {
           username: document.getElementById("profileUsername").value,  
           fname: document.getElementById("profileFirstName").value,
           sname: document.getElementById("profileSurname").value,
-          //dob: new Date(document.getElementById("profileDOB").value).toISOString().split('T')[0],
-          //city: document.getElementById("profileCity").value,
+          dob: new Date(document.getElementById("profileDOB").value).toISOString().split('T')[0],
+          city: document.getElementById("profileCity").value,
           email: document.getElementById("profileEmail").value,}})
       };
       const response = await fetch("http://localhost:8000/api/users/" + user_id + "/", requestOptions);
@@ -80,6 +85,18 @@ export default {
       this.updatedAt = data.updatedAt;
       this.fetchUserDetails()
     },
+    async createImage()
+    {
+        const imageInput = document.getElementById("pictureUpload")
+        let image = imageInput.files[0]
+        console.log(image)
+
+        let formData= new FormData()
+
+        formData.append('picture',image)
+        let newImage = fetch("http://localhost:8000/api/users/" + user_id + "/")
+
+    }
   }
 }
 
