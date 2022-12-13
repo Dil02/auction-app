@@ -17,6 +17,7 @@ urlpatterns = [
     #Item API paths
     path('api/items/', views.items_api, name="items"),
     path('api/items/<int:itemID>/', views.item_api, name="item"),
+    path('api/items/<int:itemID>/questions', views.item_questions_api, name="itemquestions"),
     path('api/available/', views.available_items, name="available"),
     path('api/available/<str:query>/', views.available_items, name="available"),
 

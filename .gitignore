@@ -1,4 +1,3 @@
-
 auction_project/db.sqlite3
-auction_project\auction\__pycache__\
 auction_project/auction/migrations/
+auction_project/auction/__pycache__/
