@@ -1,11 +1,10 @@
 <template>
     <div>
-        <form
-            class="w-75 mx-auto mt-2 pt-2 d-flex flex-column justify-content-center p-2 bg-dark text-light rounded"
+        <form class="w-75 mx-auto mt-2 pt-2 d-flex flex-column justify-content-center p-2 bg-dark text-light rounded"
             id="form1" @submit.prevent="saveNewObject()">
             <div class="form-input ml-auto">
                 <h3><label class="form-label" for="image">Choose a image</label></h3>
-               <input type="file" accept="image/*" @change="storeImage" class="form-control-file">
+                <input type="file" accept="image/*" @change="storeImage" class="form-control-file">
                 <img class="img-fluid rounded mx-auto" height=400 v-if="picture" :src="picture" />
             </div>
             <div class="form-input">
@@ -22,7 +21,7 @@
             </div>
             <div class="form-group">
                 <h3><label for="options">Select Condition</label></h3>
-                <select v-model="type" class="form-control" id="options" required>
+                <select v-model="condition" class="form-control" id="options" required>
                     <option value="NEW">NEW</option>
                     <option value="UE">USED - EXCELLENT</option>
                     <option value="UG">USED - GOOD</option>
@@ -57,8 +56,8 @@ export default {
 
     data() {
         return {
-            prev:"",
-            type: "",
+            prev: "",
+            condition: "",
             name: "",
             picture: '',
             price: null,
@@ -73,11 +72,12 @@ export default {
         async saveNewObject() {
             const item = JSON.stringify({
                 name: this.name,
-                Type: this.type, //condition
+                condition: this.condition,
                 price: this.price,
                 description: this.desc,
                 start: this.start,
                 end: this.end,
+                sold: false,
                 picture: this.picture,
             })
             console.log(item)
@@ -91,7 +91,7 @@ export default {
 
         },
 
-        async storeImage(e:any){
+        async storeImage(e: any) {
             const file = e.target.files[0];
             this.prev = URL.createObjectURL(file);  //creates a blob image (to preview image)
             var reader = new FileReader();
@@ -103,13 +103,14 @@ export default {
 </script>
 
 <style scoped>
-#b{
-    margin:auto auto;
+#b {
+    margin: auto auto;
 }
-img{
-    max-height:300px;
-    max-width:300px;
-    height:auto;
-    width:auto;
+
+img {
+    max-height: 300px;
+    max-width: 300px;
+    height: auto;
+    width: auto;
 }
 </style>
