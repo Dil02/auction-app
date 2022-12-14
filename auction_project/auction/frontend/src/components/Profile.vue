@@ -78,6 +78,9 @@ export default {
       userDetails: [],
     }
   },
+  mounted(){
+    this.fetchUserDetails(1);
+  },
   methods: {
     async fetchUserDetails(user_id) {
         //Performs an Ajax request to fetch a User's details.
