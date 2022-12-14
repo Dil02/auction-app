@@ -26,7 +26,9 @@
             <li class="bold">Bidding Ends : {{ item.end }}</li>
         </ul>
 
-        <button class="btn btn-sm btn-success me-2">Back</button>
+        <router-link :to="{ name: 'auction' }" custom v-slot="{ navigate }">
+            <button @click="navigate" role="link" class="btn btn-sm btn-success me-2">Back</button>
+        </router-link>
     </div>
 
     <bidComponent :item="item" />

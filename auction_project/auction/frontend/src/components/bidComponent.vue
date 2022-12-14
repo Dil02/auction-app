@@ -12,7 +12,7 @@
         </h1>
 
         <p id="bidPrice">
-            Highest Bid : £{{ item.price }}
+            Current Price : £{{ item.price }}
         </p>
 
         <h3 class="smallerText">Previous bids</h3>
@@ -49,6 +49,7 @@ export default {
 
         //UNFINISHED METHOD
         async processBid() {
+            //MAKE SURE BID CAN BE MADE TO THIS ITEM - LIKE WHETHER IT IS AVAILABLE 
             let givenBid = parseFloat(document.getElementById("newBid").value);
             if (givenBid != NaN) {
                 givenBid = parseFloat(givenBid.toFixed(2));
@@ -65,7 +66,7 @@ export default {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/bids");
             let data = await response.json();
             this.bids = data.bids;
-        }
+        },
     },
 }
 </script>
