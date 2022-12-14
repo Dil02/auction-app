@@ -2,7 +2,7 @@
     <div>
         <h1>Questions And Answer</h1>
         <!-- Display All questions with the response -->
-        {{questions[1].title}}
+        
         <div v-for="q in questions">
             <div>
                 <h2>{{ q.title }}</h2>
@@ -41,7 +41,6 @@
 
 
 <script lang="ts">
-import { onUpdated } from 'vue';
 
 export default {
     props:{

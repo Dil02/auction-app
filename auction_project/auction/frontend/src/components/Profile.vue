@@ -55,6 +55,22 @@
 
 <script>
 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 // Adding local state
 export default {
   data() {
@@ -62,10 +78,15 @@ export default {
       userDetails: [],
     }
   },
+  mounted(){
+    this.fetchUserDetails(1);
+  },
   methods: {
     async fetchUserDetails(user_id) {
         //Performs an Ajax request to fetch a User's details.
-        let response = await fetch("http://localhost:8000/api/users/" + user_id + "/")
+        let response = await fetch("http://localhost:8000/api/users/" + user_id + "/", {
+            credentials: "include", mode: "cors", referrerPolicy: "no-referrer",}
+        );
         let data = await response.json()
         this.userDetails = data.user
         console.log(this.userDetails)
@@ -75,7 +96,7 @@ export default {
       //Performs an Ajax PUT request to update a user's profile.
       const requestOptions = {
         method: "PUT",
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json", "X-CSRF-Token" : getCookie("csrftoken")},
         body: JSON.stringify({ data : {
           username: document.getElementById("profileUsername").value,  
           fname: document.getElementById("profileFirstName").value,
@@ -84,10 +105,10 @@ export default {
           city: document.getElementById("profileCity").value,
           email: document.getElementById("profileEmail").value,}})
       };
-      const response = await fetch("http://localhost:8000/api/users/" + user_id + "/", requestOptions);
+      const response = await fetch("http://localhost:8000/api/users/" + user_id + "/", requestOptions, {
+            credentials: "same-origin", mode: "cors", referrerPolicy: "no-referrer",});
       const data = await response.json();
       this.updatedAt = data.updatedAt;
-      this.fetchUserDetails()
     },
   }
 }

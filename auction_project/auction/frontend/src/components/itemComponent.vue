@@ -20,8 +20,11 @@
             <li>Condition : {{ item.condition }}</li>
         </ul>
 
-        <button class="btn btn-sm btn-success me-2">View</button>
+        <router-link :to="'/item/' + item.id" custom v-slot="{ navigate }">
+            <button @click="navigate" role="link" class="btn btn-sm btn-success me-2">View</button>
+        </router-link>
     </div>
+
 
 </template>
   
@@ -29,7 +32,6 @@
 export default {
     props: ["item"],
     methods: {
-
     }
 }
 </script>
@@ -50,14 +52,5 @@ export default {
     height: auto;
     color: white;
     text-align: center;
-}
-
-.fixedSize {
-    border: 1px solid blue;
-    overflow-y: auto;
-    margin-left: 0.2em;
-    margin-right: 0.2em;
-    height: 6em;
-    font-size: 0.8em;
 }
 </style>
