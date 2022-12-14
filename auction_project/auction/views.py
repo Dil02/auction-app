@@ -262,7 +262,7 @@ def questions_api(request:HttpRequest)->JsonResponse:
 
 @csrf_exempt
 def item_questions_api(request:HttpRequest, itemID:int)->JsonResponse:
-    """API returning questions for the ID of an item."""
+    """API returning questions for the ID of the given item."""
     if request.method == 'GET':
         givenItem = get_object_or_404(Item, id=itemID)
         return JsonResponse({
@@ -272,6 +272,17 @@ def item_questions_api(request:HttpRequest, itemID:int)->JsonResponse:
             ]
         })
     
+@csrf_exempt
+def item_bids_api(request:HttpRequest, itemID:int)->JsonResponse:
+    """API returning bids for the ID of the given item"""
+    if request.method == 'GET':
+        givenItem = get_object_or_404(Item, id=itemID)
+        return JsonResponse({
+          'bids': [
+            bid.to_dict()
+            for bid in Bid.objects.filter(item=givenItem)
+          ]  
+        })
 
 @csrf_exempt
 def question_api(request:HttpRequest, questionID:int)->JsonResponse:
