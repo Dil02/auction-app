@@ -1,12 +1,15 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpRequest, JsonResponse, HttpResponse
+from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model, login, authenticate, logout
 from auction.forms import RegistrationForm, AccountAuthenticationForm
 import json
 from .models import *
 from datetime import date
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django.views.decorators.csrf import ensure_csrf_cookie
 # Create your views here.
 
 #Note : 1. get_object_or_404 will mean 404 will happen if an object can't be found with its ID
@@ -35,7 +38,7 @@ def users_api(request : HttpRequest) ->JsonResponse:
         user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname)
         return JsonResponse(user.to_dict())
 
-@csrf_exempt
+
 def user_api(request : HttpRequest, userID : int)->JsonResponse:
     """API handling an individual User, an integer ID of the User must be passed. GET returns User with ID specified. DELETE removes User with ID specified. PUT updates User with ID specified."""
     user = get_object_or_404(User, id=userID)
@@ -366,10 +369,16 @@ def loginPage(request):
         
         if user is not None:
             login(request, user)
-            return redirect('register')
+            print(request.session.get('_auth_user_id'))
+            return redirect("http://127.0.0.1:5173/")
+            # response = HttpResponse()
+            # response.headers['userID']= request.session.get('_auth_user_id')
+            # return response
+            
         
     return render(request, 'accounts/login.html', context)
 
 def logout_view(request):
     logout(request)
     return redirect('register')
+

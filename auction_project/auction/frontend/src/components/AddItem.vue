@@ -73,7 +73,7 @@ export default {
         async saveNewObject() {
             const item = JSON.stringify({
                 name: this.name,
-                Type: this.type,
+                Type: this.type, //condition
                 price: this.price,
                 description: this.desc,
                 start: this.start,
