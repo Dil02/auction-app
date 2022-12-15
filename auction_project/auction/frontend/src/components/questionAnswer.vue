@@ -45,7 +45,7 @@
 
 
 <script lang="ts">
-function getCookie(name:any) {
+function getCookie(name:String) {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
