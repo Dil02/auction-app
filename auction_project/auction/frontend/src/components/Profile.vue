@@ -60,9 +60,17 @@
     </div>
 </template>
 
-<script>
-
-function getCookie(name) {
+<script lang="ts">
+type User = {
+  username: string;
+  fname: string;
+  sname:string;
+  dob:string;
+  city:string;
+  email:string;
+  id:string;
+};
+function getCookie(name:String) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -82,7 +90,7 @@ function getCookie(name) {
 export default {
     data() {
         return {
-            userDetails: [],
+            userDetails: null as null|User,
         }
     },
     mounted() {
