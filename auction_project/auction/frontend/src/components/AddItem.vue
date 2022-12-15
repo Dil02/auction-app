@@ -9,7 +9,8 @@
 
             <div class="form-input">
                 <h3><label class="form-label" for="name">Name of Product</label></h3>
-                <input v-model="name" type="text" class="form-control" placeholder="Enter name" name="name" id="itemName">
+                <input v-model="name" type="text" class="form-control" placeholder="Enter name" name="name"
+                    id="itemName">
             </div>
             <div class="form-input mb-2">
                 <h3><label for="Description">Description</label></h3>
@@ -17,7 +18,8 @@
             </div>
             <div class="form-input">
                 <h3><label class="form-label" for="price">Set Price</label></h3>
-                <input v-model="price" type="text" class="form-control" placeholder="Enter value" name="value" id="itemValue">
+                <input v-model="price" type="text" class="form-control" placeholder="Enter value" name="value"
+                    id="itemValue">
             </div>
             <div class="form-group">
                 <h3><label for="options">Select Condition</label></h3>
@@ -33,7 +35,8 @@
                 <div class="d-inline">
                     <h3><label for="startDate">Start Date</label></h3>
                     <div style="clear: both;"></div>
-                    <input v-model=start id="itemStartDate" class="form-control" type="date" required name="startDate"/>
+                    <input v-model=start id="itemStartDate" class="form-control" type="date" required
+                        name="startDate" />
                 </div>
 
                 <div class="d-inline">
@@ -51,7 +54,7 @@
 </template>
 
 <script lang="ts">
-function getCookie(name:String) {
+function getCookie(name: String) {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -101,15 +104,19 @@ export default {
             // })
 
             const formData = new FormData()
-            let fileField = document.querySelector("#itemImage") as HTMLInputElement ;
-            formData.append('myFile',fileField?.files[0]) 
-            formData.append('name',(document.querySelector("#itemName") as HTMLInputElement).value)
-            formData.append('description',(document.querySelector("#itemDesc")as HTMLInputElement).value)
-            formData.append('price',(document.querySelector("#itemValue")as HTMLInputElement).value)
-            formData.append('condition',(document.querySelector("#itemCondition")as HTMLInputElement).value)
-            formData.append('startDate',(document.querySelector("#itemStartDate")as HTMLInputElement).value)
-            formData.append('endDate',(document.querySelector("#itemEndDate")as HTMLInputElement).value)
-            
+            let fileField = document.querySelector("#itemImage") as HTMLInputElement;
+
+            if (fileField.files && fileField.files.length > 0) {
+                formData.append('myFile', fileField.files[0])
+            }
+
+            formData.append('name', (document.querySelector("#itemName") as HTMLInputElement).value)
+            formData.append('description', (document.querySelector("#itemDesc") as HTMLInputElement).value)
+            formData.append('price', (document.querySelector("#itemValue") as HTMLInputElement).value)
+            formData.append('condition', (document.querySelector("#itemCondition") as HTMLInputElement).value)
+            formData.append('startDate', (document.querySelector("#itemStartDate") as HTMLInputElement).value)
+            formData.append('endDate', (document.querySelector("#itemEndDate") as HTMLInputElement).value)
+
             let response = await fetch("http://127.0.0.1:8000/api/items/", {
                 method: 'POST',
                 credentials: "include",

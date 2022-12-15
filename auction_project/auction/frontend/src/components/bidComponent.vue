@@ -12,19 +12,21 @@
         </h1>
 
         <p id="bidPrice">
-            Current Price : £{{ item.price }}
+            Current Price : £{{ latestPrice }}
         </p>
 
         <h3 class="smallerText">Previous bids</h3>
         <ul class="list-unstyled biggerText">
-            <li v-for="bid in bids" :key="bid.id">{{ bid.time }} : Bid of £{{ bid.amount }} placed by {{ bid.bidder.username }}</li>
+            <li v-for="bid in bids" :key="bid.id">{{ bid.time }} : Bid of £{{ bid.amount }} placed by {{
+                    bid.bidder.username
+            }}</li>
         </ul>
 
         <div v-show="provideInput" class="bidInput input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text">£</span>
             </div>
-            <input  id="newBid" type="number" class="form-control">
+            <input id="newBid" type="number" class="form-control">
         </div>
         <button @click="processBid" v-show="provideInput" class="btn btn-sm btn-success me-2">Place Bid</button>
         <p class="errorMsg bold" v-if="invalidInput">Please check your input. Make sure your bid is higher than the
@@ -37,7 +39,7 @@
 </template>
   
 <script lang="ts">
-function getCookie(name:String) {
+function getCookie(name: String) {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -54,31 +56,39 @@ function getCookie(name:String) {
 }
 
 export default {
+    props: ["item"],
     data() {
         return {
             bids: [] as any[],
             provideInput: true,
             invalidInput: false,
             validInput: false,
-            item: null as any,
+            latestPrice: 0,
         };
     },
     async mounted() {
-        this.fetchItem();
         this.available()
         this.displayBids();
     },
     methods: {
 
         async processBid() {
-            let givenBid = parseFloat(document.getElementById("newBid").value);
+            let givenElement = document.getElementById("newBid") as HTMLInputElement
+            let givenBid;
+            if (givenElement == null) {
+                return;
+            }
+            else {
+                givenBid = parseFloat(givenElement.value)
+            }
+
             if (!Number.isNaN(givenBid)) {
                 givenBid = parseFloat(givenBid.toFixed(2));
 
                 let currentPrice = parseFloat(this.item.price);
-                if (givenBid <= currentPrice) { 
+                if (givenBid <= currentPrice) {
                     this.invalidInput = true;
-                    this.validInput=false;
+                    this.validInput = false;
                     return
                 }
 
@@ -102,21 +112,16 @@ export default {
                 })
 
                 this.validInput = true;
-                this.invalidInput=false;
+                this.invalidInput = false;
                 this.displayBids();
-                this.fetchItem();
+                this.latestPrice = givenBid;
             }
             else {
                 this.invalidInput = true;
-                this.validInput=false;
+                this.validInput = false;
             }
 
 
-        },
-        async fetchItem(){
-            let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/");
-            let data = await response.json();
-            this.item = data.item;
         },
         async displayBids() {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/bids");
@@ -132,6 +137,7 @@ export default {
             let end = record.end
             let sold = record.sold
             let owner = record.owner
+            this.latestPrice = record.price
 
             if (sold == true) {
                 this.provideInput = false;
