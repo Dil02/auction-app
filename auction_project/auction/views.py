@@ -292,7 +292,7 @@ def item_bids_api(request:HttpRequest, itemID:int)->JsonResponse:
         return JsonResponse({
           'bids': [
             bid.to_dict()
-            for bid in Bid.objects.filter(item=givenItem)
+            for bid in Bid.objects.filter(item=givenItem).order_by('-time')
           ]  
         })
 
