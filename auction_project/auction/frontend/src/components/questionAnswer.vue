@@ -2,7 +2,6 @@
     <div>
         <h1>Questions And Answer</h1>
         <!-- Display All questions with the response -->
-        This {{ownerId}}
         <div v-for="(q,index) in questions" class="question border rounded  pb-3 mb-3 ml-2  me-5" :key="index">
             <div>
                 <h3 class="title">{{ q.title }}</h3>
@@ -10,11 +9,10 @@
                 <h5>Answer: {{ q.response }} </h5>
                 <!-- OWNERID ==user ID IF THIS IS TRUE OUTPUT A BUTTON TO ADD ANSWER! -->
                 <div v-show='(check==false)'>
-                    <div v-if="q.response == '' || q.response == null">
-                        <button @click="answerForm($event,q.id)" >Add Answer</button>
-                        <form v-on:submit.prevent="updateQuestion(q.id)"  >
-                            <textarea v-model="response[index]" class="form-control w-75 ml-auto mx-auto"  rows="4" ></textarea>
-                            <button type="submit" class="btn btn-primary  pt-2 w-50 mb-2 ml-auto mx-auto mt-2" id="c" >Submit</button>
+                    <div v-if="q.response == '' || q.response == null" >
+                        <form v-on:submit.prevent="updateQuestion(q.id,q,index)" class="sq d-flex-inline flex-column justify-content-center mx-auto w-50 inline">
+                            <div><textarea v-model="response[index]" class="form-control w-75 ml-auto mx-auto"  rows="4" ></textarea></div>
+                            <div><button type="submit" class="btn btn-primary  w-75 pt-2 w-50 mb-3 mx-auto mt-2 d-block" id="c" >Submit</button></div>
                          </form>
                     </div>
                 </div>
@@ -22,7 +20,7 @@
             </div>
         </div>
         <!-- IF USERID !=OWNER THEN HAVE A BUTTON TO POST A QUESTION (SMALL FORM BOOOM) -->
-        {{check}}
+
         <div v-if="check">
             <form v-on:submit.prevent="SaveQuestion" class="sq d-flex flex-column justify-content-center mx-auto w-50">
                 <h2>Add Question</h2>
@@ -118,25 +116,15 @@ export default {
             })
             this.fetch_questions();
         },
-        async answerForm(event:any,id: any) {
-            
-            const button = event.target;
-            button.style.display = 'none';
-
-            console.log(id)
-            
-            //create Answer form
-
-        },
-
-        async updateQuestion(id:any){
+        async updateQuestion(id:any,q:any,index:any){
             const question = JSON.stringify({
-                title: this.title,
-                description: this.description,
+                title: q.title,
+                description: q.description,
                 item: this.$route.params.id,
-                response:this.response,
+                response:this.response[index],
             })
-            console.log("id")
+            console.log("the title is "+q.title)
+            console.log(q);
             let response = await fetch("http://127.0.0.1:8000/api/questions/"+id+"/", {
                     method: 'PUT',
                     credentials: "include",
@@ -148,9 +136,7 @@ export default {
                     },
                 body: question,
                 })
-        },
-        toggle() {
-            this.check = !this.check
+                this.fetch_questions();
         },
     },
     async mounted() {
