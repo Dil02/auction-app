@@ -3,7 +3,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model, login, authenticate, logout
-from django.contrib import messages
 from auction.forms import RegistrationForm, AccountAuthenticationForm
 import json
 from .models import *
@@ -394,12 +393,9 @@ def loginPage(request:HttpRequest)->Union[HttpResponse, HttpResponseRedirect]:
             # response = HttpResponse()
             # response.headers['userID']= request.session.get('_auth_user_id')
             # return response
-        else:
-            messages.info(request, 'Invalid username or password')
-    
-    context = {}
             
-    return render(request, 'accounts/login.html', context)
+        
+    return render(request, 'accounts/login.html', {})
 
 def logout_view(request:HttpRequest)->HttpResponseRedirect:
     logout(request)
