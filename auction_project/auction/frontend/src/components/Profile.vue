@@ -52,10 +52,10 @@
         </div>
         <div class="row">
             <div col-sm-6>
-                <button @click="fetchUserDetails(1)">View profile</button>
+                <button @click="fetchUserDetails()">View profile</button>
             </div>
             <div col-sm-6>
-                <button @click="updateUserDetails(1)" class="mt-2">Update profile</button>
+                <button @click="updateUserDetails()" class="mt-2">Update profile</button>
             </div>
         </div>
     </div>
@@ -90,21 +90,16 @@ export default {
         this.fetchUserDetails();
     },
     methods: {
-        async fetchUserDetails() {
-            //Performs an Ajax request to fetch a User's details.
-            let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", {
-                credentials: "include", mode: "cors", referrerPolicy: "no-referrer",
-            }
-            );
-            let data = await response.json()
-            this.userDetails = data.User
-            console.log(this.userDetails)
-        },
-        async updateUserDetails(user_id) {
+        async updateUserDetails() {
             //Performs an Ajax PUT request to update a user's profile.
-            const requestOptions = {
-                method: "PUT",
-                headers: { "Content-Type": "application/json", "X-CSRF-Token": getCookie("csrftoken") },
+            let response = await fetch("http://127.0.0.1:8000/api/users/" + this.userDetails.id + "/", {
+                method: 'PUT',
+                credentials: "include",
+                mode: "cors",
+                referrerPolicy: "no-referrer",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({
                     data: {
                         username: document.getElementById("profileUsername").value,
@@ -115,12 +110,19 @@ export default {
                         email: document.getElementById("profileEmail").value,
                     }
                 })
-            };
-            const response = await fetch("http://localhost:8000/api/users/" + user_id + "/", requestOptions, {
-                credentials: "same-origin", mode: "cors", referrerPolicy: "no-referrer",
-            });
-            const data = await response.json();
+            })
+            let data = await response.json();
             this.updatedAt = data.updatedAt;
+            this.$router.push('/')
+        },
+
+        async fetchUserDetails() {
+            let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
+            let data = await response.json();
+            if (data.User == "None") {
+                window.location.href = "http://127.0.0.1:8000/login/"
+            }
+            this.userDetails = data.User
         },
     }
 }

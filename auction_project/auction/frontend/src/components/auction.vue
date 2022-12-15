@@ -24,7 +24,6 @@ export default {
   data() {
     return {
       items: [],
-      currentUser: [],
     };
   },
   async mounted() {
@@ -34,8 +33,6 @@ export default {
     this.items = data.items;
 
   },
-
-
   methods: {
     async fetchItems(query = "") {
       let response;
@@ -55,16 +52,13 @@ export default {
     },
 
     async getSession() {
-      let response = await fetch("http://127.0.0.1:8000/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
+      let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
       let data = await response.json();
       if (data.User == "None") {
         window.location.href = "http://127.0.0.1:8000/login/"
       }
-      console.log(data.User);
-      this.currentUser = data.User;
-    }
+    },
   },
-
 }
 
 </script>

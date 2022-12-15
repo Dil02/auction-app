@@ -38,7 +38,7 @@ def users_api(request : HttpRequest) ->JsonResponse:
         user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname)
         return JsonResponse(user.to_dict())
 
-
+@csrf_exempt
 def user_api(request : HttpRequest, userID : int)->JsonResponse:
     """API handling an individual User, an integer ID of the User must be passed. GET returns User with ID specified. DELETE removes User with ID specified. PUT updates User with ID specified."""
     user = get_object_or_404(User, id=userID)

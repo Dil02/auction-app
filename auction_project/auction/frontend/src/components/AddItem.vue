@@ -68,6 +68,9 @@ export default {
 
         }
     },
+    async mounted() {
+        this.getSession();
+    },
     methods: {
         async saveNewObject() {
             const item = JSON.stringify({
@@ -102,7 +105,15 @@ export default {
             var reader = new FileReader();
             this.picture = await new Response(this.prev).text()  // changes blob to string (to store)
 
-        }
+        },
+
+        async getSession() {
+            let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
+            let data = await response.json();
+            if (data.User == "None") {
+                window.location.href = "http://127.0.0.1:8000/login/"
+            }
+        },
     }
 }  
 </script>

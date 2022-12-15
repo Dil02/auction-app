@@ -12,8 +12,8 @@ urlpatterns = [
 
     
     #User API paths
-    path('api/users/', views.users_api, name="items"),
-    path('api/users/<int:userID>/', views.user_api, name="item"),
+    path('api/users/', views.users_api, name="users"),
+    path('api/users/<int:userID>/', views.user_api, name="user"),
     path('api/sessionUser/', views.sessionUser, name="sessionUser"),
 
     #Item API paths
