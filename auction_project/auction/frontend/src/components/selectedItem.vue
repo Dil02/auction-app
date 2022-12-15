@@ -8,22 +8,22 @@
     <div class="itemBox border bg-secondary rounded pt-5 pb-3 mt-5 me-5">
 
         <h1 class="jumbotron ms-2 me-2 smallerText">
-            {{ item.name }}
+            {{ item?.name }}
         </h1>
 
         <p>
-            Sold by : {{ owner.username }}
+            Sold by : {{ owner?.username }}
         </p>
 
         <div class="description">
-            <p>{{ item.description }}</p>
+            <p>{{ item?.description }}</p>
         </div>
 
         <ul class="list-unstyled biggerText">
-            <li>Condition : {{ item.condition }}</li>
+            <li>Condition : {{ item?.condition }}</li>
             <br>
-            <li class="bold">Bidding Starts : {{ item.start }}</li>
-            <li class="bold">Bidding Ends : {{ item.end }}</li>
+            <li class="bold">Bidding Starts : {{ item?.start }}</li>
+            <li class="bold">Bidding Ends : {{ item?.end }}</li>
         </ul>
 
         <router-link :to="{ name: 'auction' }" custom v-slot="{ navigate }">
@@ -39,7 +39,20 @@
 </template>
 
 
-<script>
+<script lang="ts">
+type Item = {
+    name: string;
+    username: string;
+    description: string;
+    condition: string;
+    start: string;
+    end: string;
+    id: string;
+};
+type Owner = {
+    username: string;
+
+};
 import bidComponent from './bidComponent.vue';
 import questionAnswer from './questionAnswer.vue';
 
@@ -49,8 +62,8 @@ export default {
     },
     data() {
         return {
-            item: [],
-            owner: [],
+            item: null as null|Item ,
+            owner: null as null|Owner,
         };
     },
     async mounted() {
@@ -66,10 +79,7 @@ export default {
         async getSession() {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             let data = await response.json();
-            if (data.User == "None") {
-                window.location.href = "http://127.0.0.1:8000/login/"
-            }
-            this.userDetails = data.User
+            this.owner = data.User 
         },
     }
 }
