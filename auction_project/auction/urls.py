@@ -7,7 +7,7 @@ urlpatterns = [
     #User Account paths
     path('register/', views.registerPage, name="register"),
     path('login/', views.loginPage, name="login"),
-    path("", views.registerPage, name="home"),
+    path("", views.loginPage, name="home"),
     path('logout/', views.logout_view, name="logout"),
 
     
