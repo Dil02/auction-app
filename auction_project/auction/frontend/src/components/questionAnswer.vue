@@ -2,7 +2,7 @@
     <div>
         <h1>Questions And Answer</h1>
         <!-- Display All questions with the response -->
-        
+
         <div v-for="q in questions">
             <div>
                 <h2>{{ q.title }}</h2>
@@ -43,8 +43,8 @@
 <script lang="ts">
 
 export default {
-    props:{
-        item:Object,
+    props: {
+        item: Object,
     },
     data() {
         return {
@@ -58,14 +58,14 @@ export default {
     },
     methods: {
         async fetch_questions() {
-            let response = await fetch("http://localhost:8000/api/questions/");  // NEED to add itemID so it can get all questions from a specific item  (need to add the view for it still)
+            let response = await fetch("http://127.0.0.1:8000/api/item/" + this.$route.params.id + "/questions", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" });  // NEED to add itemID so it can get all questions from a specific item  (need to add the view for it still)
             let data = await response.json();
             this.questions = data.questions;
             console.log("check" + this.questions)
         },
         //Gets The userID  THAT IS CURRENTLY LOGGED IN!-i dont know if we can current get the user id tho
         async fetch_user() {
-            let response = await fetch("http://localhost:8000/user/")
+            let response = await fetch("http://localhost:8000/user/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             const data = await response.json();
             this.userId = data.user_id;
         },

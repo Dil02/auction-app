@@ -20,71 +20,134 @@
             <li v-for="bid in bids" :key="bid.id">{{ bid.time }} : Bid of £{{ bid.amount }} placed by {{ bid.bidder.username }}</li>
         </ul>
 
-        <div class="bidInput input-group mb-3">
+        <div v-show="provideInput" class="bidInput input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text">£</span>
             </div>
             <input v-model="amount"   id="newBid" type="number" class="form-control">
         </div>
-        <button @click="processBid($event)" v-if="item.sold == false" class="btn btn-sm btn-success me-2">Place Bid</button>
-        
+        <button @click="processBid" v-show="provideInput" class="btn btn-sm btn-success me-2">Place Bid</button>
+        <p class="errorMsg bold" v-if="invalidInput">Please check your input. Make sure your bid is higher than the
+            price.
+        </p>
+        <p class="successMsg bold" v-if="validInput">Your bid has been successfully added. </p>
+
     </div>
 
 </template>
   
 <script>
+
+function getCookie(name) {
+    let cookieValue = "";
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 export default {
     props: ["item"],
 
     data() {
         return {
             bids: [],
-            feedback: 0,
-            amount:null,
+            provideInput: true,
+            invalidInput: false,
+            validInput: false,
         };
     },
     async mounted() {
+        this.available()
         this.displayBids();
     },
     methods: {
 
-        //UNFINISHED METHOD
         async processBid() {
-            const b = JSON.stringify({
-                time: Date(),
-                amount: this.amount,
-                // bidderID: -- Need to add user id?.......
-                item: this.item.id,
-            })
-            console.log(this.amount)
-            console.log(Date())
-            //MAKE SURE BID CAN BE MADE TO THIS ITEM - LIKE WHETHER IT IS AVAILABLE 
             let givenBid = parseFloat(document.getElementById("newBid").value);
             if (givenBid != NaN) {
                 givenBid = parseFloat(givenBid.toFixed(2));
-                if (givenBid > parseFloat(this.item.price)) {
-                    //PERFORM POST AND ADD THIS BID
-                    let response = await fetch("http://127.0.0.1:8000/api/bids/", {
+
+                let currentPrice = parseFloat(this.item.price);
+                if (givenBid <= currentPrice) {
+                    this.invalidInput = true;
+                    return
+                }
+
+
+                const newBid = JSON.stringify({
+                    "itemId": this.$route.params.id,
+                    "amount": givenBid,
+
+                })
+
+                let response = await fetch("http://127.0.0.1:8000/api/bids/", {
                     method: 'POST',
+                    credentials: "include",
+                    mode: "cors",
+                    referrerPolicy: "no-referrer",
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie("csrftoken"),
                     },
-                    body: b,
+                    body: newBid,
                 })
-                    //CALL DISPLAY BIDS
-                    this.displayBids()
-                    //CHANGE FEEDBACK TO 1
-                    this.feedback=1
-                }
+
+                this.validInput = true;
+                this.displayBids();
             }
             else {
+                this.invalidInput = true;
             }
+
+
         },
         async displayBids() {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/bids");
             let data = await response.json();
             this.bids = data.bids;
         },
+
+        async available() {
+            let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id);
+            let data = await response.json();
+            let record = data.item;
+            let start = record.start
+            let end = record.end
+            let sold = record.sold
+            let owner = record.owner
+
+            if (sold == true) {
+                this.provideInput = false;
+                return;
+            }
+
+            const startTimestamp = Date.parse(start);
+            const endTimestamp = Date.parse(end);
+            let current = new Date();
+
+            if (endTimestamp < startTimestamp || endTimestamp < current) {
+                this.provideInput = false;
+                return;
+            }
+
+            let ownerComparison = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" });
+            let ownerData = await ownerComparison.json()
+
+            if (ownerData.User.id == owner.id) {
+                this.provideInput = false;
+                return;
+            }
+            return;
+        }
     },
 }
 </script>
@@ -114,6 +177,14 @@ export default {
 
 #bidPrice {
     font-size: 1.5em;
+}
+
+.errorMsg {
+    color: red;
+}
+
+.successMsg {
+    color: green;
 }
 
 .bidInput {

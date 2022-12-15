@@ -16,11 +16,13 @@
                     <li class="nav-item">
                         <div class="nav-link"><router-link to="/item">Add Item</router-link></div>
                     </li>
-                    <li class="nav-item ml-auto">
-                        <div class="nav-link"><router-link to="/login">Login</router-link></div>
-                    </li>
+
                     <li class="nav-item ml-auto">
                         <div class="nav-link"><router-link to="/profile">View Profile</router-link></div>
+                    </li>
+
+                    <li class="nav-item ml-auto">
+                        <div class="nav-link"><router-link to="/logout">Logout</router-link></div>
                     </li>
                 </ul>
             </div>

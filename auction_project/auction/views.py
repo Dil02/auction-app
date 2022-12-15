@@ -7,16 +7,14 @@ from auction.forms import RegistrationForm, AccountAuthenticationForm
 import json
 from .models import *
 from datetime import date
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from django.views.decorators.csrf import ensure_csrf_cookie
+from datetime import datetime
 # Create your views here.
 
 #Note : 1. get_object_or_404 will mean 404 will happen if an object can't be found with its ID
 #       2. Need to check if Username passwords are automatically hashed by abstract user or if they want us to do it, they're already hashed from looking at the admin page
 #       3. Add/Change stuff in Post/Put to make inputs work (sometimes dates/time recieved needs to be formatted before database accepts it)
 
-@csrf_exempt
+
 def users_api(request : HttpRequest) ->JsonResponse:
     """API handling all users. GET request returns JSON of all objects. POST request adds new user record and returns it."""
     if request.method == 'GET':
@@ -37,7 +35,6 @@ def users_api(request : HttpRequest) ->JsonResponse:
         sname = data["sname"]
         user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname)
         return JsonResponse(user.to_dict())
-
 
 def user_api(request : HttpRequest, userID : int)->JsonResponse:
     """API handling an individual User, an integer ID of the User must be passed. GET returns User with ID specified. DELETE removes User with ID specified. PUT updates User with ID specified."""
@@ -81,7 +78,24 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
     return HttpResponse("")
 
 
-@csrf_exempt
+def sessionUser(request: HttpRequest)->JsonResponse:
+    """Returns the JSON of the User the session corresponds to. None if no session exists"""
+    
+    if request.method == 'GET':
+        userId = request.session.get('_auth_user_id')
+        try:
+            sessionUser = User.objects.filter(id=userId)[0]
+        except IndexError:
+            return JsonResponse({
+                'User': "None"
+            })
+        
+        return JsonResponse({
+            'User':
+                sessionUser.to_dict()
+        })
+
+
 def items_api(request : HttpRequest) ->JsonResponse:
     """API handling all items. GET request returns JSON of all objects. POST request adds new item record and returns it."""
     if request.method == 'GET':
@@ -102,13 +116,12 @@ def items_api(request : HttpRequest) ->JsonResponse:
         end = data["end"]
         picture = data["picture"]
         sold = data["sold"]
-        #ownerID = data["owner"]
-        #owner = get_object_or_404(User, id=ownerID)
-        owner = User.objects.first()        
+        userId = request.session.get('_auth_user_id')
+        owner = get_object_or_404(User, id=userId)   
         item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
         return JsonResponse(item.to_dict())
 
-@csrf_exempt
+
 def item_api(request : HttpRequest, itemID : int)->JsonResponse:
     """API handling individual item, an integer ID of the item must be passed. GET returns item with ID specified. DELETE removes item with ID specified. PUT updates item with ID specified."""
     item = get_object_or_404(Item, id=itemID)
@@ -132,10 +145,8 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
         end = data["end"]
         picture = data["picture"]
         sold = data["sold"]
-        #ownerID = data["owner"]
-
-        #owner = get_object_or_404(User, id=ownerID)
-        owner = User.objects.first()
+        userId = request.session.get('_auth_user_id')
+        owner = get_object_or_404(User, id=userId)
 
         #Data of item object is reassigned to passed values
         item.name = name
@@ -155,7 +166,7 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
 
     return HttpResponse("")
 
-@csrf_exempt
+
 def available_items(request:HttpRequest, query:str="")->JsonResponse:
 
     today = date.today()
@@ -171,7 +182,7 @@ def available_items(request:HttpRequest, query:str="")->JsonResponse:
     })
 
 
-@csrf_exempt
+
 def bids_api(request: HttpRequest)->JsonResponse:
     """API handling all bids. GET request returns JSON of all objects. POST request adds new bid record and returns it."""
     if request.method == 'GET':
@@ -183,20 +194,21 @@ def bids_api(request: HttpRequest)->JsonResponse:
         })
 
     elif request.method == 'POST':
-        body = json.loads(request.body)
-        data = body["data"]
-        time = data["time"]
+        data = json.loads(request.body)
+        time = datetime.now()
         amount = data["amount"]
-        bidderID = data["bidder"]
-        itemID = data["item"]
+        itemID = data["itemId"]
 
-        bidder = get_object_or_404(User, id=bidderID)
+        userId = request.session.get('_auth_user_id')
+        bidder = get_object_or_404(User, id=userId)
         item = get_object_or_404(Item, id=itemID)
-
+        item.price = amount
+        item.save()
         bid = Bid.objects.create(bidder=bidder, item=item, time=time, amount=amount)
+
         return JsonResponse(bid.to_dict())
 
-@csrf_exempt
+
 def bid_api(request:HttpRequest, bidID:int)->JsonResponse:
     """API handling individual bid, an integer ID of the bid must be passed. GET returns bid with ID specified. DELETE removes bid with ID specified. PUT updates bid with ID specified."""
     bid = get_object_or_404(Bid, id=bidID)
@@ -215,10 +227,10 @@ def bid_api(request:HttpRequest, bidID:int)->JsonResponse:
         data = body["data"]
         time = data["time"]
         amount = data["amount"]
-        bidderID = data["bidder"]
+        userId = request.session.get('_auth_user_id')
         itemID = data["item"]
 
-        bidder = get_object_or_404(User, id=bidderID)
+        bidder = get_object_or_404(User, id=userId)
         item = get_object_or_404(Item, id=itemID)
 
         #Data of bid object is reassigned to passed values
@@ -234,7 +246,7 @@ def bid_api(request:HttpRequest, bidID:int)->JsonResponse:
 
     return HttpResponse("")
 
-@csrf_exempt
+
 def questions_api(request:HttpRequest)->JsonResponse:
     """API handling all questions. GET request returns JSON of all objects. POST request adds new question record and returns it."""
     if request.method == 'GET':
@@ -252,15 +264,15 @@ def questions_api(request:HttpRequest)->JsonResponse:
         description = data["description"]
         response = data["response"]
         itemID = data["item"]
-        questionerID = data["questioner"]
-
+        userId = request.session.get('_auth_user_id')
+        
         item = get_object_or_404(Item, id=itemID)
-        questioner = get_object_or_404(User, id=questionerID)
+        questioner = get_object_or_404(User, id=userId)
 
         question = Question.objects.create(title=title, description=description,response=response,item=item,questioner=questioner)
         return JsonResponse(question.to_dict())
 
-@csrf_exempt
+
 def item_questions_api(request:HttpRequest, itemID:int)->JsonResponse:
     """API returning questions for the ID of the given item."""
     if request.method == 'GET':
@@ -272,7 +284,7 @@ def item_questions_api(request:HttpRequest, itemID:int)->JsonResponse:
             ]
         })
     
-@csrf_exempt
+
 def item_bids_api(request:HttpRequest, itemID:int)->JsonResponse:
     """API returning bids for the ID of the given item"""
     if request.method == 'GET':
@@ -280,11 +292,11 @@ def item_bids_api(request:HttpRequest, itemID:int)->JsonResponse:
         return JsonResponse({
           'bids': [
             bid.to_dict()
-            for bid in Bid.objects.filter(item=givenItem)
+            for bid in Bid.objects.filter(item=givenItem).order_by('-time')
           ]  
         })
 
-@csrf_exempt
+
 def question_api(request:HttpRequest, questionID:int)->JsonResponse:
     """API handling individual question, an integer ID of the question must be passed. GET returns question with ID specified. DELETE removes question with ID specified. PUT updates question with ID specified."""
     question = get_object_or_404(Question, id=questionID)
@@ -305,10 +317,10 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
         description = data["description"]
         response = data["response"]
         itemID = data["item"]
-        questionerID = data["questioner"]
+        userId = request.session.get('_auth_user_id')
 
         item = get_object_or_404(Item, id=itemID)
-        questioner = get_object_or_404(User, id=questionerID)
+        questioner = get_object_or_404(User, id=userId)
 
         #Data of question object is reassigned to passed values
         question.title = title
@@ -324,7 +336,7 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
 
     return HttpResponse("")
 
-@csrf_exempt
+
 def profileImage_api(request: HttpRequest, userID : int)->JsonResponse:        
     """API handling of profile picture."""
     user = get_object_or_404(User, id=userID)
@@ -390,8 +402,8 @@ def loginPage(request):
         
         if user is not None:
             login(request, user)
-            print(request.session.get('_auth_user_id'))
-            return redirect("http://127.0.0.1:5173/")
+            response = redirect('http://127.0.0.1:5173/')          
+            return response
             # response = HttpResponse()
             # response.headers['userID']= request.session.get('_auth_user_id')
             # return response

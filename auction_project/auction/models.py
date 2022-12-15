@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import datetime
 
 
 #Changes made from the diagram : 
@@ -98,7 +99,7 @@ class Bid(models.Model):
             'id': self.id,
             'bidder': self.bidder.to_dict(),
             'item': self.item.to_dict(),
-            'time': self.time,
+            'time': self.time.strftime("%Y/%m/%d-%H:%M:%S"),
             'amount':self.amount,
         }
 

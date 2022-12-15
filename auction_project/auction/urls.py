@@ -9,10 +9,12 @@ urlpatterns = [
     path('login/', views.loginPage, name="login"),
     path("", views.registerPage, name="home"),
     path('logout/', views.logout_view, name="logout"),
+
     
     #User API paths
-    path('api/users/', views.users_api, name="items"),
-    path('api/users/<int:userID>/', views.user_api, name="item"),
+    path('api/users/', views.users_api, name="users"),
+    path('api/users/<int:userID>/', views.user_api, name="user"),
+    path('api/sessionUser/', views.sessionUser, name="sessionUser"),
 
     #Item API paths
     path('api/items/', views.items_api, name="items"),

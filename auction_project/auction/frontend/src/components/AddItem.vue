@@ -50,7 +50,22 @@
     </div>
 </template>
 
-<script lang="ts">
+<script>
+function getCookie(name) {
+    let cookieValue = "";
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 export default {
 
@@ -68,6 +83,10 @@ export default {
 
         }
     },
+    async mounted() {
+        this.getSession();
+    },
+
     methods: {
         async saveNewObject() {
             const item = JSON.stringify({
@@ -81,23 +100,37 @@ export default {
                 picture: this.picture,
             })
             console.log(item)
-            let response = await fetch("http://localhost:8000/api/items/", {
+            let response = await fetch("http://127.0.0.1:8000/api/items/", {
                 method: 'POST',
+                credentials: "include",
+                mode: "cors",
+                referrerPolicy: "no-referrer",
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie("csrftoken"),
                 },
                 body: item,
             })
 
+            this.$router.push('/')
+
         },
 
-        async storeImage(e: any) {
+        async storeImage(e) {
             const file = e.target.files[0];
             this.prev = URL.createObjectURL(file);  //creates a blob image (to preview image)
             var reader = new FileReader();
             this.picture = await new Response(this.prev).text()  // changes blob to string (to store)
 
-        }
+        },
+
+        async getSession() {
+            let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
+            let data = await response.json();
+            if (data.User == "None") {
+                window.location.href = "http://127.0.0.1:8000/login/"
+            }
+        },
     }
 }  
 </script>

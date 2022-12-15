@@ -27,12 +27,12 @@ export default {
     };
   },
   async mounted() {
+    this.getSession();
     let response = await fetch("http://127.0.0.1:8000/api/available/");
     let data = await response.json();
     this.items = data.items;
 
   },
-
   methods: {
     async fetchItems(query = "") {
       let response;
@@ -49,9 +49,16 @@ export default {
     async searchItems() {
       let query = document.getElementById('searchBar').value;
       this.fetchItems(query);
-    }
-  },
+    },
 
+    async getSession() {
+      let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
+      let data = await response.json();
+      if (data.User == "None") {
+        window.location.href = "http://127.0.0.1:8000/login/"
+      }
+    },
+  },
 }
 
 </script>

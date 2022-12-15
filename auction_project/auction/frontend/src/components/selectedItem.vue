@@ -33,15 +33,19 @@
 
     <bidComponent :item="item" />
 
+    <questionAnswer />
+
+
 </template>
 
 
 <script>
 import bidComponent from './bidComponent.vue';
+import questionAnswer from './questionAnswer.vue';
 
 export default {
     components: {
-        bidComponent,
+        bidComponent, questionAnswer
     },
     data() {
         return {
@@ -50,7 +54,8 @@ export default {
         };
     },
     async mounted() {
-        let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id);
+        this.getSession();
+        let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id, { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" });
         let data = await response.json();
 
         this.item = data.item;
@@ -58,7 +63,14 @@ export default {
 
     },
     methods: {
-
+        async getSession() {
+            let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
+            let data = await response.json();
+            if (data.User == "None") {
+                window.location.href = "http://127.0.0.1:8000/login/"
+            }
+            this.userDetails = data.User
+        },
     }
 }
 </script>
