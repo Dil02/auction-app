@@ -50,7 +50,22 @@
     </div>
 </template>
 
-<script lang="ts">
+<script>
+function getCookie(name) {
+    let cookieValue = "";
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 export default {
 
@@ -71,6 +86,7 @@ export default {
     async mounted() {
         this.getSession();
     },
+
     methods: {
         async saveNewObject() {
             const item = JSON.stringify({
@@ -91,6 +107,7 @@ export default {
                 referrerPolicy: "no-referrer",
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie("csrftoken"),
                 },
                 body: item,
             })
@@ -99,7 +116,7 @@ export default {
 
         },
 
-        async storeImage(e: any) {
+        async storeImage(e) {
             const file = e.target.files[0];
             this.prev = URL.createObjectURL(file);  //creates a blob image (to preview image)
             var reader = new FileReader();

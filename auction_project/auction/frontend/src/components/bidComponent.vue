@@ -33,6 +33,23 @@
 </template>
   
 <script>
+
+function getCookie(name) {
+    let cookieValue = "";
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 export default {
     props: ["item"],
 
@@ -49,18 +66,30 @@ export default {
 
         //UNFINISHED METHOD
         async processBid() {
-            //MAKE SURE BID CAN BE MADE TO THIS ITEM - LIKE WHETHER IT IS AVAILABLE 
             let givenBid = parseFloat(document.getElementById("newBid").value);
             if (givenBid != NaN) {
                 givenBid = parseFloat(givenBid.toFixed(2));
-                if (givenBid > parseFloat(this.item.price)) {
-                    //PERFORM POST AND ADD THIS BID
-                    //CALL DISPLAY BIDS
-                    //CHANGE FEEDBACK TO 1
-                }
             }
-            else {
-            }
+
+            const newBid = JSON.stringify({
+                "itemId": this.$route.params.id,
+                "amount": givenBid,
+
+            })
+
+            let response = await fetch("http://127.0.0.1:8000/api/bids/", {
+                method: 'POST',
+                credentials: "include",
+                mode: "cors",
+                referrerPolicy: "no-referrer",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie("csrftoken"),
+                },
+                body: newBid,
+            })
+
+            this.$router.push('/')
         },
         async displayBids() {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/bids");

@@ -99,6 +99,7 @@ export default {
                 referrerPolicy: "no-referrer",
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie("csrftoken")
                 },
                 body: JSON.stringify({
                     data: {
