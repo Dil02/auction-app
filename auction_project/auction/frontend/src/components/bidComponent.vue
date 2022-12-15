@@ -24,7 +24,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">£</span>
             </div>
-            <input v-model="amount"   id="newBid" type="number" class="form-control">
+            <input  id="newBid" type="number" class="form-control">
         </div>
         <button @click="processBid" v-show="provideInput" class="btn btn-sm btn-success me-2">Place Bid</button>
         <p class="errorMsg bold" v-if="invalidInput">Please check your input. Make sure your bid is higher than the
@@ -37,7 +37,6 @@
 </template>
   
 <script lang="ts">
-
 function getCookie(name:String) {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
@@ -55,17 +54,17 @@ function getCookie(name:String) {
 }
 
 export default {
-    props: ["item"],
-
     data() {
         return {
-            bids: [],
+            bids: [] as any[],
             provideInput: true,
             invalidInput: false,
             validInput: false,
+            item: null as any,
         };
     },
     async mounted() {
+        this.fetchItem();
         this.available()
         this.displayBids();
     },
@@ -105,7 +104,7 @@ export default {
                 this.validInput = true;
                 this.invalidInput=false;
                 this.displayBids();
-                
+                this.fetchItem();
             }
             else {
                 this.invalidInput = true;
@@ -114,7 +113,11 @@ export default {
 
 
         },
-
+        async fetchItem(){
+            let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/");
+            let data = await response.json();
+            this.item = data.item;
+        },
         async displayBids() {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/bids");
             let data = await response.json();

@@ -399,5 +399,5 @@ def loginPage(request:HttpRequest)->Union[HttpResponse, HttpResponseRedirect]:
 
 def logout_view(request:HttpRequest)->HttpResponseRedirect:
     logout(request)
-    return redirect('register')
+    return redirect('login')
 
