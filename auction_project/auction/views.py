@@ -80,6 +80,23 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
 
     return HttpResponse("")
 
+@csrf_exempt
+def sessionUser(request: HttpRequest)->JsonResponse:
+    """Returns the JSON of the User the session corresponds to. None if no session exists"""
+    
+    if request.method == 'GET':
+        userId = request.session.get('_auth_user_id')
+        try:
+            sessionUser = User.objects.filter(id=userId)[0]
+        except IndexError:
+            return JsonResponse({
+                'User': "None"
+            })
+        
+        return JsonResponse({
+            'User':
+                sessionUser.to_dict()
+        })
 
 @csrf_exempt
 def items_api(request : HttpRequest) ->JsonResponse:
@@ -102,9 +119,8 @@ def items_api(request : HttpRequest) ->JsonResponse:
         end = data["end"]
         picture = data["picture"]
         sold = data["sold"]
-        #ownerID = data["owner"]
-        #owner = get_object_or_404(User, id=ownerID)
-        owner = User.objects.first()        
+        userId = request.session.get('_auth_user_id')
+        owner = get_object_or_404(User, id=userId)   
         item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
         return JsonResponse(item.to_dict())
 
@@ -132,10 +148,8 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
         end = data["end"]
         picture = data["picture"]
         sold = data["sold"]
-        #ownerID = data["owner"]
-
-        #owner = get_object_or_404(User, id=ownerID)
-        owner = User.objects.first()
+        userId = request.session.get('_auth_user_id')
+        owner = get_object_or_404(User, id=userId)
 
         #Data of item object is reassigned to passed values
         item.name = name
@@ -187,10 +201,10 @@ def bids_api(request: HttpRequest)->JsonResponse:
         data = body["data"]
         time = data["time"]
         amount = data["amount"]
-        bidderID = data["bidder"]
         itemID = data["item"]
 
-        bidder = get_object_or_404(User, id=bidderID)
+        userId = request.session.get('_auth_user_id')
+        bidder = get_object_or_404(User, id=userId)
         item = get_object_or_404(Item, id=itemID)
 
         bid = Bid.objects.create(bidder=bidder, item=item, time=time, amount=amount)
@@ -215,10 +229,10 @@ def bid_api(request:HttpRequest, bidID:int)->JsonResponse:
         data = body["data"]
         time = data["time"]
         amount = data["amount"]
-        bidderID = data["bidder"]
+        userId = request.session.get('_auth_user_id')
         itemID = data["item"]
 
-        bidder = get_object_or_404(User, id=bidderID)
+        bidder = get_object_or_404(User, id=userId)
         item = get_object_or_404(Item, id=itemID)
 
         #Data of bid object is reassigned to passed values
@@ -252,10 +266,10 @@ def questions_api(request:HttpRequest)->JsonResponse:
         description = data["description"]
         response = data["response"]
         itemID = data["item"]
-        questionerID = data["questioner"]
-
+        userId = request.session.get('_auth_user_id')
+        
         item = get_object_or_404(Item, id=itemID)
-        questioner = get_object_or_404(User, id=questionerID)
+        questioner = get_object_or_404(User, id=userId)
 
         question = Question.objects.create(title=title, description=description,response=response,item=item,questioner=questioner)
         return JsonResponse(question.to_dict())
@@ -305,10 +319,10 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
         description = data["description"]
         response = data["response"]
         itemID = data["item"]
-        questionerID = data["questioner"]
+        userId = request.session.get('_auth_user_id')
 
         item = get_object_or_404(Item, id=itemID)
-        questioner = get_object_or_404(User, id=questionerID)
+        questioner = get_object_or_404(User, id=userId)
 
         #Data of question object is reassigned to passed values
         question.title = title
@@ -390,8 +404,8 @@ def loginPage(request):
         
         if user is not None:
             login(request, user)
-            print(request.session.get('_auth_user_id'))
-            return redirect("http://127.0.0.1:5173/")
+            response = redirect('http://127.0.0.1:5173/')          
+            return response
             # response = HttpResponse()
             # response.headers['userID']= request.session.get('_auth_user_id')
             # return response

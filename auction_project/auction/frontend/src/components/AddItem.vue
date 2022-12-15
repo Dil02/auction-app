@@ -81,13 +81,18 @@ export default {
                 picture: this.picture,
             })
             console.log(item)
-            let response = await fetch("http://localhost:8000/api/items/", {
+            let response = await fetch("http://127.0.0.1:8000/api/items/", {
                 method: 'POST',
+                credentials: "include",
+                mode: "cors",
+                referrerPolicy: "no-referrer",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: item,
             })
+
+            this.$router.push('/')
 
         },
 
