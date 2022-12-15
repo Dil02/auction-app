@@ -33,7 +33,7 @@
 
     <bidComponent :item="item" />
 
-    <questionAnswer :item="item"/>
+    <questionAnswer :item="item" />
 
 
 </template>
