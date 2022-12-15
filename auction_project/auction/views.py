@@ -9,6 +9,7 @@ from .models import *
 from datetime import date
 from datetime import datetime
 from typing import Union, Optional
+from django.contrib import messages
 # Create your views here.
 
 #Note : 1. get_object_or_404 will mean 404 will happen if an object can't be found with its ID
@@ -393,9 +394,11 @@ def loginPage(request:HttpRequest)->Union[HttpResponse, HttpResponseRedirect]:
             # response = HttpResponse()
             # response.headers['userID']= request.session.get('_auth_user_id')
             # return response
+        else:
+            messages.info(request, 'Invalid username or password')
+    return render(request, 'accounts/login.html',{})
             
         
-    return render(request, 'accounts/login.html', {})
 
 def logout_view(request:HttpRequest)->HttpResponseRedirect:
     logout(request)
