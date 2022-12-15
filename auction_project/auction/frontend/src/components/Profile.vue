@@ -60,9 +60,17 @@
     </div>
 </template>
 
-<script>
-
-function getCookie(name) {
+<script lang="ts">
+type User = {
+  username: string;
+  fname: string;
+  sname:string;
+  dob:string;
+  city:string;
+  email:string;
+  id:string;
+};
+function getCookie(name:String) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -82,7 +90,7 @@ function getCookie(name) {
 export default {
     data() {
         return {
-            userDetails: [],
+            userDetails: null as null|User,
         }
     },
     mounted() {
@@ -91,7 +99,7 @@ export default {
     methods: {
         async updateUserDetails() {
             //Performs an Ajax PUT request to update a user's profile.
-            let response = await fetch("http://127.0.0.1:8000/api/users/" + this.userDetails.id + "/", {
+            let response = await fetch("http://127.0.0.1:8000/api/users/" + this.userDetails?.id + "/", {
                 method: 'PUT',
                 credentials: "include",
                 mode: "cors",
@@ -122,7 +130,7 @@ export default {
             let fileField = document.querySelector("#profileInput")
             formData.append('myFile',fileField.files[0])
 
-            let response = await fetch("http://127.0.0.1:8000/api/profile/" + this.userDetails.id + "/", {
+            let response = await fetch("http://127.0.0.1:8000/api/profile/" + this.userDetails?.id + "/", {
                 method: 'POST',
                 credentials: "include",
                 mode: "cors",
