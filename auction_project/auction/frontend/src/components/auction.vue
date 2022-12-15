@@ -13,7 +13,7 @@
 </template>
 
 
-<script>
+<script lang="ts">
 import ItemComponent from './ItemComponent.vue';
 
 export default {
@@ -47,7 +47,12 @@ export default {
     },
 
     async searchItems() {
-      let query = document.getElementById('searchBar').value;
+      let givenElement = document.getElementById("searchBar") as HTMLInputElement
+      let query;
+      if (givenElement == null) {
+        return;
+      }
+      query = givenElement.value;
       this.fetchItems(query);
     },
 

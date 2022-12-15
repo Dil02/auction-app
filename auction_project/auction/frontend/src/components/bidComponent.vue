@@ -55,11 +55,28 @@ function getCookie(name: String) {
     return cookieValue;
 }
 
+type User = {
+    username: string;
+    fname: string;
+    sname: string;
+    dob: string;
+    city: string;
+    email: string;
+    id: string;
+};
+
+type Bid = {
+    bidder: User;
+    time: string;
+    amount: String;
+    id: string;
+};
+
 export default {
     props: ["item"],
     data() {
         return {
-            bids: [] as any[],
+            bids: [] as Bid[],
             provideInput: true,
             invalidInput: false,
             validInput: false,

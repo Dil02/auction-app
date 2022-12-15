@@ -99,7 +99,7 @@ export default {
     methods: {
         async updateUserDetails() {
             //Performs an Ajax PUT request to update a user's profile.
-            let response = await fetch("http://127.0.0.1:8000/api/users/" + this.userDetails.id + "/", {
+            let response = await fetch("http://127.0.0.1:8000/api/users/" + this.userDetails?.id + "/", {
                 method: 'PUT',
                 credentials: "include",
                 mode: "cors",
@@ -130,7 +130,7 @@ export default {
             let fileField = document.querySelector("#profileInput")
             formData.append('myFile',fileField.files[0])
 
-            let response = await fetch("http://127.0.0.1:8000/api/profile/" + this.userDetails.id + "/", {
+            let response = await fetch("http://127.0.0.1:8000/api/profile/" + this.userDetails?.id + "/", {
                 method: 'POST',
                 credentials: "include",
                 mode: "cors",
