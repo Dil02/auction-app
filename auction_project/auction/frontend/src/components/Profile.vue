@@ -42,9 +42,8 @@
                 <img v-bind:src="'http://localhost:8000' + userDetails.picture" height="350" width="350"
                     alt="Press 'View Profile'">
 
-                <form v-bind:action="'http://localhost:8000/api/profile/' + 1" method="POST"
-                    enctype="multipart/form-data" class="mt-2">
-                    <input type="file" accept="image/*" name="myFile">
+                <form method="POST" enctype="multipart/form-data" class="mt-2" @submit.prevent="updateUserPicture()">
+                    <input type="file" accept="image/*" name="myFile" id="profileInput">
                     <input type="submit">
                 </form>
 
@@ -115,6 +114,25 @@ export default {
             let data = await response.json();
             this.updatedAt = data.updatedAt;
             this.$router.push('/')
+        },
+
+        async updateUserPicture()
+        {
+            const formData = new FormData()
+            let fileField = document.querySelector("#profileInput")
+            formData.append('myFile',fileField.files[0])
+
+            let response = await fetch("http://127.0.0.1:8000/api/profile/" + this.userDetails.id + "/", {
+                method: 'POST',
+                credentials: "include",
+                mode: "cors",
+                referrerPolicy: "no-referrer",
+                headers: {
+                    'X-CSRFToken': getCookie("csrftoken")
+                },
+                body: formData,          
+            })
+            let data = await response.json();
         },
 
         async fetchUserDetails() {

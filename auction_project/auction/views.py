@@ -107,19 +107,37 @@ def items_api(request : HttpRequest) ->JsonResponse:
         })
 
     elif request.method == 'POST':
-        data = json.loads(request.body)
-        name = data["name"]
-        description = data["description"]
-        condition = data["condition"]
-        price = data["price"]
-        start = data["start"]
-        end = data["end"]
-        picture = data["picture"]
-        sold = data["sold"]
+        # data = json.loads(request.body["item"])
+        # name = data["name"]
+        # description = data["description"]
+        # condition = data["condition"]
+        # price = data["price"]
+        # start = data["start"]
+        # end = data["end"]
+        # picture = data["picture"]
+        # sold = data["sold"]
+        # userId = request.session.get('_auth_user_id')
+        # owner = get_object_or_404(User, id=userId)   
+        # item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
+        # return JsonResponse(item.to_dict())
+
+
+        name = request.POST["name"]
+        description = request.POST["description"]
+        condition = request.POST["condition"]
+        price = request.POST["price"]
+        start = request.POST["startDate"]
+        end = request.POST["endDate"]
         userId = request.session.get('_auth_user_id')
-        owner = get_object_or_404(User, id=userId)   
-        item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
-        return JsonResponse(item.to_dict())
+        owner = get_object_or_404(User, id=userId)
+       
+        item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, owner=owner)
+        
+        uploaded_file = request.FILES['myFile']
+        item.picture=uploaded_file
+        item.save()
+
+        return HttpResponse("")
 
 
 def item_api(request : HttpRequest, itemID : int)->JsonResponse:
@@ -347,7 +365,6 @@ def profileImage_api(request: HttpRequest, userID : int)->JsonResponse:
 
         return JsonResponse({
             'filename' : uploaded_file.name,
-
         })
 
     return HttpResponse("")

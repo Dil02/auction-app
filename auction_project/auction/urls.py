@@ -33,5 +33,5 @@ urlpatterns = [
     path('api/questions/<int:questionID>/', views.question_api, name="question"),
 
     #Profile paths
-    path('api/profile/<int:userID>', views.profileImage_api, name="profile"),
+    path('api/profile/<int:userID>/', views.profileImage_api, name="profile"),
 ]

@@ -15,6 +15,8 @@
             Sold by : {{ item.owner.username }}
         </p>
 
+        <img v-bind:src="'http://localhost:8000' + item.picture" height="350" width="350">
+
         <ul class="list-unstyled biggerText">
             <li>Current Price : £{{ item.price }}</li>
             <li>Condition : {{ item.condition }}</li>

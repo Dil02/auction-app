@@ -59,7 +59,8 @@ class Item(models.Model):
     price = models.DecimalField(max_digits=10,decimal_places=2)
     start = models.DateField('Start Date')
     end = models.DateField('End Date')
-    picture = models.CharField(max_length=255)
+    #picture = models.CharField(max_length=255)
+    picture = models.ImageField(upload_to="itemimages/", blank=True, null=True)
     sold = models.BooleanField(default=False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE , null=True)
 
@@ -78,7 +79,7 @@ class Item(models.Model):
             'price': self.price,
             'start': self.start,
             'end':self.end,
-            'picture':self.picture,
+            'picture':self.picture.url,
             'sold':self.sold,
             'owner':self.owner.to_dict()
         }
