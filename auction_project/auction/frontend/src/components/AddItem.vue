@@ -50,8 +50,8 @@
     </div>
 </template>
 
-<script>
-function getCookie(name) {
+<script lang="ts">
+function getCookie(name:String) {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -101,14 +101,14 @@ export default {
             // })
 
             const formData = new FormData()
-            let fileField = document.querySelector("#itemImage")
-            formData.append('myFile',fileField.files[0])
-            formData.append('name',document.querySelector("#itemName").value)
-            formData.append('description',document.querySelector("#itemDesc").value)
-            formData.append('price',document.querySelector("#itemValue").value)
-            formData.append('condition',document.querySelector("#itemCondition").value)
-            formData.append('startDate',document.querySelector("#itemStartDate").value)
-            formData.append('endDate',document.querySelector("#itemEndDate").value)
+            let fileField = document.querySelector("#itemImage") as HTMLInputElement ;
+            formData.append('myFile',fileField?.files[0]) 
+            formData.append('name',(document.querySelector("#itemName") as HTMLInputElement).value)
+            formData.append('description',(document.querySelector("#itemDesc")as HTMLInputElement).value)
+            formData.append('price',(document.querySelector("#itemValue")as HTMLInputElement).value)
+            formData.append('condition',(document.querySelector("#itemCondition")as HTMLInputElement).value)
+            formData.append('startDate',(document.querySelector("#itemStartDate")as HTMLInputElement).value)
+            formData.append('endDate',(document.querySelector("#itemEndDate")as HTMLInputElement).value)
             
             let response = await fetch("http://127.0.0.1:8000/api/items/", {
                 method: 'POST',

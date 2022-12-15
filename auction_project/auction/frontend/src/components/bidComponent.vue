@@ -36,9 +36,9 @@
 
 </template>
   
-<script>
+<script lang="ts">
 
-function getCookie(name) {
+function getCookie(name:String) {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -73,12 +73,13 @@ export default {
 
         async processBid() {
             let givenBid = parseFloat(document.getElementById("newBid").value);
-            if (givenBid != NaN) {
+            if (!Number.isNaN(givenBid)) {
                 givenBid = parseFloat(givenBid.toFixed(2));
 
                 let currentPrice = parseFloat(this.item.price);
-                if (givenBid <= currentPrice) {
+                if (givenBid <= currentPrice) { 
                     this.invalidInput = true;
+                    this.validInput=false;
                     return
                 }
 
@@ -102,14 +103,18 @@ export default {
                 })
 
                 this.validInput = true;
+                this.invalidInput=false;
                 this.displayBids();
+                
             }
             else {
                 this.invalidInput = true;
+                this.validInput=false;
             }
 
 
         },
+
         async displayBids() {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/bids");
             let data = await response.json();
@@ -130,8 +135,8 @@ export default {
                 return;
             }
 
-            const startTimestamp = Date.parse(start);
-            const endTimestamp = Date.parse(end);
+            const startTimestamp = new Date(Date.parse(start));
+            const endTimestamp = new Date(Date.parse(end));
             let current = new Date();
 
             if (endTimestamp < startTimestamp || endTimestamp < current) {
