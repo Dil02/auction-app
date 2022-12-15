@@ -258,8 +258,8 @@ def questions_api(request:HttpRequest)->JsonResponse:
         })
 
     elif request.method == 'POST':
-        body = json.loads(request.body)
-        data = body["data"]
+        data = json.loads(request.body)
+        # data = body["data"]
         title = data["title"]
         description = data["description"]
         response = data["response"]

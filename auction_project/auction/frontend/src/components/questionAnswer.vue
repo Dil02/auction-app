@@ -3,13 +3,13 @@
         <h1>Questions And Answer</h1>
         <!-- Display All questions with the response -->
 
-        <div v-for="q in questions">
+        <div v-for="q in questions" class="question border rounded  pb-3 mb-3 ml-2  me-5">
             <div>
-                <h2>{{ q.title }}</h2>
+                <h1 class="title">{{ q.title }}</h1>
                 <h3>Question: {{ q.description }}</h3>
                 <h3>Answer: {{ q.response }} </h3>
                 <!-- OWNERID ==user ID IF THIS IS TRUE OUTPUT A BUTTON TO ADD ANSWER! -->
-                <div v-if='q.item.owner.username == q.item.user.id'>
+                <div v-if='ownerId == userId'>
                     <div v-if="q.response == '' || q.response == null">
                         <button @click="answerForm(q.id)">Add Answer</button>
                     </div>
@@ -18,9 +18,9 @@
             </div>
         </div>
         <!-- IF USERID !=OWNER THEN HAVE A BUTTON TO POST A QUESTION (SMALL FORM BOOOM) -->
-        <div v-if='item?.owner.id != userId'>
+        <div v-if='ownerId!= userId'>
             <h2>Add Question</h2>
-            <form>
+            <form v-on:submit.prevent="SaveQuestion">
                 <div class="form-input">
                     <h3>
                         <label class="form-label" for="title">Title </label>
@@ -41,11 +41,23 @@
 
 
 <script lang="ts">
-
+function getCookie(name:any) {
+    let cookieValue = "";
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 export default {
-    props: {
-        item: Object,
-    },
+    props: ["item"],
     data() {
         return {
             questions: [] as any[],
@@ -53,25 +65,48 @@ export default {
             title: '',
             description: '',
             check: false,
+            ownerId:null,
 
         }
     },
     methods: {
         async fetch_questions() {
-            let response = await fetch("http://127.0.0.1:8000/api/item/" + this.$route.params.id + "/questions", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" });  // NEED to add itemID so it can get all questions from a specific item  (need to add the view for it still)
+            let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/questions", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" });  // NEED to add itemID so it can get all questions from a specific item  (need to add the view for it still)
             let data = await response.json();
             this.questions = data.questions;
             console.log("check" + this.questions)
         },
         //Gets The userID  THAT IS CURRENTLY LOGGED IN!-i dont know if we can current get the user id tho
         async fetch_user() {
-            let response = await fetch("http://localhost:8000/user/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
+            let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             const data = await response.json();
-            this.userId = data.user_id;
+            this.userId = data.User.id;
+            this.ownerId=this.item.owner.id
+            console.log("ITEM-OWNER-ID"+this.item.owner)
+            console.log("the userID is"+this.userId)
+        },
+        async SaveQuestion(){
+            const question = JSON.stringify({
+                title: this.title,
+                description: this.description,
+                item: this.$route.params.id,
+                response:'',
+            })
+                let response = await fetch("http://127.0.0.1:8000/api/questions/", {
+                    method: 'POST',
+                    credentials: "include",
+                    mode: "cors",
+                    referrerPolicy: "no-referrer",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie("csrftoken"),
+                    },
+                body: question,
+            })
         },
         async answerForm(id: any) {
 
-            let response = await fetch("http://localhost:8000/api/questions/" + id + "/");
+            let response = await fetch("http://127.0.0.1:8000/api/questions/" + id + "/");
 
 
             //create Answer form
@@ -80,14 +115,27 @@ export default {
         toggle() {
             this.check = !this.check
         },
-
-        mounted() {
-            this.fetch_questions();
-        },
+    },
+    async mounted() {
+        this.fetch_user();
+        this.fetch_questions();
+    },
+    updated(){
+        console.log(this.item.owner);
     }
+    
 }
 </script>
 
 <style scoped>
+.title{
+    font-weight:bold;
 
+    
+}
+.question{
+    color:white;
+    background-color:#312c2c;
+
+}
 </style>
