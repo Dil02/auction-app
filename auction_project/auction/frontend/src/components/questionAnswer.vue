@@ -45,6 +45,12 @@
 
 
 <script lang="ts">
+type Question = {
+  title: string;
+  description: string;
+  response:String;
+  id:Number;
+};
 function getCookie(name:String) {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
@@ -63,7 +69,7 @@ function getCookie(name:String) {
 export default {
     data() {
         return {
-            questions: [] as any[],
+            questions: [] as Array<Question>,
             userId: null,
             title: '',
             description: '',
@@ -116,7 +122,7 @@ export default {
             })
             this.fetch_questions();
         },
-        async updateQuestion(id:any,q:any,index:any){
+        async updateQuestion(id:any,q:Question,index:number){
             const question = JSON.stringify({
                 title: q.title,
                 description: q.description,
