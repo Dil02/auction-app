@@ -2,29 +2,34 @@
     <div>
         <h1>Questions And Answer</h1>
         <!-- Display All questions with the response -->
-
-        <div v-for="q in questions" class="question border rounded  pb-3 mb-3 ml-2  me-5">
+        This {{ownerId}}
+        <div v-for="(q,index) in questions" class="question border rounded  pb-3 mb-3 ml-2  me-5" :key="index">
             <div>
-                <h1 class="title">{{ q.title }}</h1>
-                <h3>Question: {{ q.description }}</h3>
-                <h3>Answer: {{ q.response }} </h3>
+                <h3 class="title">{{ q.title }}</h3>
+                <h5>Question: {{ q.description }}</h5>
+                <h5>Answer: {{ q.response }} </h5>
                 <!-- OWNERID ==user ID IF THIS IS TRUE OUTPUT A BUTTON TO ADD ANSWER! -->
-                <div v-if='ownerId == userId'>
+                <div v-show='(check==false)'>
                     <div v-if="q.response == '' || q.response == null">
-                        <button @click="answerForm(q.id)">Add Answer</button>
+                        <button @click="answerForm($event,q.id)" >Add Answer</button>
+                        <form v-on:submit.prevent="updateQuestion(q.id)"  >
+                            <textarea v-model="response[index]" class="form-control w-75 ml-auto mx-auto"  rows="4" ></textarea>
+                            <button type="submit" class="btn btn-primary  pt-2 w-50 mb-2 ml-auto mx-auto mt-2" id="c" >Submit</button>
+                         </form>
                     </div>
                 </div>
 
             </div>
         </div>
         <!-- IF USERID !=OWNER THEN HAVE A BUTTON TO POST A QUESTION (SMALL FORM BOOOM) -->
-        <div v-if='ownerId!= userId'>
-            <h2>Add Question</h2>
-            <form v-on:submit.prevent="SaveQuestion">
+        {{check}}
+        <div v-if="check">
+            <form v-on:submit.prevent="SaveQuestion" class="sq d-flex flex-column justify-content-center mx-auto w-50">
+                <h2>Add Question</h2>
                 <div class="form-input">
                     <h3>
-                        <label class="form-label" for="title">Title </label>
-                        <input v-model="title" type="text" class="form-control" placeholder="Enter question title">
+                        <label class="form-label" for="title">Title</label>
+                        <input v-model="title" type="text" class="form-control w-100" placeholder="Enter question title">
                     </h3>
                 </div>
                 <div class="form-input mb-2">
@@ -32,8 +37,9 @@
                         <textarea v-model="description" class="form-control" id="Desc" rows="4" required></textarea>
                     </h3>
                 </div>
-                <button type="submit" class="btn btn-primary mt-4 pt-2 w-50 mb-3" id="b">Submit</button>
+                <button type="submit" class="btn btn-primary  pt-2 w-50 mb-3 mx-auto" id="b" >Submit</button>
 
+                
             </form>
         </div>
     </div>
@@ -57,7 +63,6 @@ function getCookie(name:any) {
     return cookieValue;
 }
 export default {
-    props: ["item"],
     data() {
         return {
             questions: [] as any[],
@@ -66,23 +71,31 @@ export default {
             description: '',
             check: false,
             ownerId:null,
-
+            valid:true,
+            valid2:false,
+            response:[],
+            item:null,
         }
     },
     methods: {
+
+       async fetch_item(){
+            let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id);
+            let data = await response.json();
+            this.item=data.item;   
+            this.ownerId=data.item.owner.id;  
+        },
         async fetch_questions() {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/questions", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" });  // NEED to add itemID so it can get all questions from a specific item  (need to add the view for it still)
             let data = await response.json();
             this.questions = data.questions;
-            console.log("check" + this.questions)
         },
-        //Gets The userID  THAT IS CURRENTLY LOGGED IN!-i dont know if we can current get the user id tho
+        //Gets The userID  THAT IS CURRENTLY LOGGED IN!
         async fetch_user() {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             const data = await response.json();
             this.userId = data.User.id;
-            this.ownerId=this.item.owner.id
-            console.log("ITEM-OWNER-ID"+this.item.owner)
+            console.log(this.item)
             console.log("the userID is"+this.userId)
         },
         async SaveQuestion(){
@@ -103,26 +116,59 @@ export default {
                     },
                 body: question,
             })
+            this.fetch_questions();
         },
-        async answerForm(id: any) {
+        async answerForm(event:any,id: any) {
+            
+            const button = event.target;
+            button.style.display = 'none';
 
-            let response = await fetch("http://127.0.0.1:8000/api/questions/" + id + "/");
-
-
+            console.log(id)
+            
             //create Answer form
 
+        },
+
+        async updateQuestion(id:any){
+            const question = JSON.stringify({
+                title: this.title,
+                description: this.description,
+                item: this.$route.params.id,
+                response:this.response,
+            })
+            console.log("id")
+            let response = await fetch("http://127.0.0.1:8000/api/questions/"+id+"/", {
+                    method: 'PUT',
+                    credentials: "include",
+                    mode: "cors",
+                    referrerPolicy: "no-referrer",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie("csrftoken"),
+                    },
+                body: question,
+                })
         },
         toggle() {
             this.check = !this.check
         },
     },
     async mounted() {
+        this.fetch_item();
         this.fetch_user();
         this.fetch_questions();
     },
-    updated(){
-        console.log(this.item.owner);
-    }
+    computed: {
+        check: function() {
+            console.log("C "+this.userId)
+            console.log("C "+this.ownerId)
+            if (this.userId ==this.ownerId) {
+                return false;
+            }
+            return true
+  },
+ 
+}
     
 }
 </script>
@@ -130,6 +176,7 @@ export default {
 <style scoped>
 .title{
     font-weight:bold;
+    color:rgb(30, 166, 251);
 
     
 }
@@ -137,5 +184,11 @@ export default {
     color:white;
     background-color:#312c2c;
 
+}
+.sq{
+    color:white;
+    background-color:#312c2c;
+    border-radius: 3%;
+    margin-bottom: 2%;
 }
 </style>
