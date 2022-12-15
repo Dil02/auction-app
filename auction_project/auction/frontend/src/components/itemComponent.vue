@@ -30,7 +30,7 @@
 
 </template>
   
-<script>
+<script lang="ts">
 export default {
     props: ["item"],
     methods: {
