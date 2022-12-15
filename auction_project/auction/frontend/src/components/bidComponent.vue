@@ -8,7 +8,7 @@
     <div class="itemBox border bg-secondary rounded pt-5 pb-3 mt-5 me-5">
 
         <h1 class="jumbotron ms-2 me-2 smallerText">
-            Bids for {{ item.name }}
+            Bids for {{ item?.name }}
         </h1>
 
         <p id="bidPrice">
@@ -83,13 +83,13 @@ export default {
             latestPrice: 0,
         };
     },
-    async mounted() {
+    async mounted() :Promise<void> {
         this.available()
         this.displayBids();
     },
     methods: {
 
-        async processBid() {
+        async processBid():Promise<void> {
             let givenElement = document.getElementById("newBid") as HTMLInputElement
             let givenBid;
             if (givenElement == null) {
@@ -140,13 +140,13 @@ export default {
 
 
         },
-        async displayBids() {
+        async displayBids() :Promise<void>{
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/bids");
             let data = await response.json();
             this.bids = data.bids;
         },
 
-        async available() {
+        async available():Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id);
             let data = await response.json();
             let record = data.item;
