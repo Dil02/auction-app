@@ -17,14 +17,14 @@
 
         <h3 class="smallerText">Previous bids</h3>
         <ul class="list-unstyled biggerText">
-            <li v-for="bid in bids">{{ bid.time }} : Bid of £{{ bid.amount }} placed by {{ bid.bidder.username }}</li>
+            <li v-for="bid in bids" :key="bid.id">{{ bid.time }} : Bid of £{{ bid.amount }} placed by {{ bid.bidder.username }}</li>
         </ul>
 
         <div v-show="provideInput" class="bidInput input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text">£</span>
             </div>
-            <input id="newBid" type="number" class="form-control">
+            <input v-model="amount"   id="newBid" type="number" class="form-control">
         </div>
         <button @click="processBid" v-show="provideInput" class="btn btn-sm btn-success me-2">Place Bid</button>
         <p class="errorMsg bold" v-if="invalidInput">Please check your input. Make sure your bid is higher than the

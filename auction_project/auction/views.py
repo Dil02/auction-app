@@ -276,8 +276,8 @@ def questions_api(request:HttpRequest)->JsonResponse:
         })
 
     elif request.method == 'POST':
-        body = json.loads(request.body)
-        data = body["data"]
+        data = json.loads(request.body)
+        # data = body["data"]
         title = data["title"]
         description = data["description"]
         response = data["response"]
@@ -329,8 +329,7 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
 
     elif request.method == "PUT":
         #Data is retrieved from request body
-        body = json.loads(request.body)
-        data = body["data"]
+        data = json.loads(request.body)
         title = data["title"]
         description = data["description"]
         response = data["response"]
