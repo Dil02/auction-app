@@ -19,7 +19,7 @@ class AccountAuthenticationForm(forms.ModelForm):
         model = User
         fields = ('email', 'password')
         
-    def clean(self):
+    def clean(self)->None:
         if self.is_valid():
             email1 = self.cleaned_data['email']
             password1 = self.cleaned_data['password']

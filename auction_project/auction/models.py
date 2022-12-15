@@ -64,7 +64,7 @@ class Item(models.Model):
     sold = models.BooleanField(default=False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE , null=True)
 
-    def __str__(self):
+    def __str__(self)->str:
         #return ("ID : " + str(self.id) + ", Name : " + self.name + ", Condition : " + self.condition + ", Price : " + str(self.price) + ", Start : " + str(self.start) + ", End : " + str(self.end) + ", Sold : " + str(self.sold) + ", Owner : " + str(self.owner))        
         return ("ID : " + str(self.id) + ", Name : " + self.name)
 
@@ -91,10 +91,10 @@ class Bid(models.Model):
     amount = models.DecimalField(max_digits=10,decimal_places=2)
 
 
-    def __str__(self):
+    def __str__(self)->str:
         #return ("ID : " + str(self.id) + ", Bidder : " + str(self.bidder) + ", Item : " + str(self.item) + ", Time : " + str(self.time) + ", Amount : " + str(self.amount))
         return ("ID : " + str(self.id) + ", Bidder : " + str(self.bidder) + ", Item : " + str(self.item))
-    def to_dict(self):
+    def to_dict(self)->dict:
         """Returns a dictionary of Bid contents"""
         return {
             'id': self.id,
@@ -112,11 +112,11 @@ class Question(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     questioner = models.ForeignKey(User, on_delete=models.CASCADE)
     
-    def __str__(self):
+    def __str__(self)->str:
         #return ("ID : " + str(self.id) + ", Title : " + str(self.title) + ", Description : " + str(self.description) + ", Response : " + str(self.response) + ", Item : " + str(self.item) + ", Questioner : " + str(self.questioner))
         return ("ID : " + str(self.id) + ", Title : " + str(self.title))
 
-    def to_dict(self):
+    def to_dict(self)->dict:
         """Returns a dictionary of Question contents"""
         return {
             'id': self.id,

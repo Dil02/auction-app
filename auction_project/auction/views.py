@@ -8,6 +8,7 @@ import json
 from .models import *
 from datetime import date
 from datetime import datetime
+from typing import Union, Optional
 # Create your views here.
 
 #Note : 1. get_object_or_404 will mean 404 will happen if an object can't be found with its ID
@@ -15,7 +16,7 @@ from datetime import datetime
 #       3. Add/Change stuff in Post/Put to make inputs work (sometimes dates/time recieved needs to be formatted before database accepts it)
 
 
-def users_api(request : HttpRequest) ->JsonResponse:
+def users_api(request : HttpRequest) ->Union[JsonResponse,HttpResponse]:
     """API handling all users. GET request returns JSON of all objects. POST request adds new user record and returns it."""
     if request.method == 'GET':
         return JsonResponse({
@@ -36,7 +37,9 @@ def users_api(request : HttpRequest) ->JsonResponse:
         user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname)
         return JsonResponse(user.to_dict())
 
-def user_api(request : HttpRequest, userID : int)->JsonResponse:
+    return HttpResponse("")
+
+def user_api(request : HttpRequest, userID : int)->Union[JsonResponse,HttpResponse]:
     """API handling an individual User, an integer ID of the User must be passed. GET returns User with ID specified. DELETE removes User with ID specified. PUT updates User with ID specified."""
     user = get_object_or_404(User, id=userID)
 
@@ -78,7 +81,7 @@ def user_api(request : HttpRequest, userID : int)->JsonResponse:
     return HttpResponse("")
 
 
-def sessionUser(request: HttpRequest)->JsonResponse:
+def sessionUser(request: HttpRequest)->Union[JsonResponse,HttpResponse]:
     """Returns the JSON of the User the session corresponds to. None if no session exists"""
     
     if request.method == 'GET':
@@ -95,8 +98,9 @@ def sessionUser(request: HttpRequest)->JsonResponse:
                 sessionUser.to_dict()
         })
 
+    return HttpResponse("")
 
-def items_api(request : HttpRequest) ->JsonResponse:
+def items_api(request : HttpRequest)->Union[JsonResponse,HttpResponse]:
     """API handling all items. GET request returns JSON of all objects. POST request adds new item record and returns it."""
     if request.method == 'GET':
         return JsonResponse({
@@ -107,40 +111,23 @@ def items_api(request : HttpRequest) ->JsonResponse:
         })
 
     elif request.method == 'POST':
-        # data = json.loads(request.body["item"])
-        # name = data["name"]
-        # description = data["description"]
-        # condition = data["condition"]
-        # price = data["price"]
-        # start = data["start"]
-        # end = data["end"]
-        # picture = data["picture"]
-        # sold = data["sold"]
-        # userId = request.session.get('_auth_user_id')
-        # owner = get_object_or_404(User, id=userId)   
-        # item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
-        # return JsonResponse(item.to_dict())
-
-
-        name = request.POST["name"]
-        description = request.POST["description"]
-        condition = request.POST["condition"]
-        price = request.POST["price"]
-        start = request.POST["startDate"]
-        end = request.POST["endDate"]
+        data = json.loads(request.body)
+        name = data["name"]
+        description = data["description"]
+        condition = data["condition"]
+        price = data["price"]
+        start = data["start"]
+        end = data["end"]
+        picture = data["picture"]
+        sold = data["sold"]
         userId = request.session.get('_auth_user_id')
-        owner = get_object_or_404(User, id=userId)
-       
-        item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, owner=owner)
-        
-        uploaded_file = request.FILES['myFile']
-        item.picture=uploaded_file
-        item.save()
+        owner = get_object_or_404(User, id=userId)   
+        item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
+        return JsonResponse(item.to_dict())
 
-        return HttpResponse("")
+    return HttpResponse("")
 
-
-def item_api(request : HttpRequest, itemID : int)->JsonResponse:
+def item_api(request : HttpRequest, itemID : int)->Union[JsonResponse,HttpResponse]:
     """API handling individual item, an integer ID of the item must be passed. GET returns item with ID specified. DELETE removes item with ID specified. PUT updates item with ID specified."""
     item = get_object_or_404(Item, id=itemID)
 
@@ -184,8 +171,7 @@ def item_api(request : HttpRequest, itemID : int)->JsonResponse:
 
     return HttpResponse("")
 
-
-def available_items(request:HttpRequest, query:str="")->JsonResponse:
+def available_items(request:HttpRequest, query:str="")->Union[JsonResponse]:
 
     today = date.today()
     available = Item.objects.filter(start__lte=today).filter(end__gte=today).filter(sold=False)
@@ -201,7 +187,7 @@ def available_items(request:HttpRequest, query:str="")->JsonResponse:
 
 
 
-def bids_api(request: HttpRequest)->JsonResponse:
+def bids_api(request: HttpRequest)->Union[JsonResponse,HttpResponse]:
     """API handling all bids. GET request returns JSON of all objects. POST request adds new bid record and returns it."""
     if request.method == 'GET':
         return JsonResponse({
@@ -226,8 +212,9 @@ def bids_api(request: HttpRequest)->JsonResponse:
 
         return JsonResponse(bid.to_dict())
 
+    return HttpResponse("")
 
-def bid_api(request:HttpRequest, bidID:int)->JsonResponse:
+def bid_api(request:HttpRequest, bidID:int)->Union[JsonResponse,HttpResponse]:
     """API handling individual bid, an integer ID of the bid must be passed. GET returns bid with ID specified. DELETE removes bid with ID specified. PUT updates bid with ID specified."""
     bid = get_object_or_404(Bid, id=bidID)
 
@@ -265,7 +252,7 @@ def bid_api(request:HttpRequest, bidID:int)->JsonResponse:
     return HttpResponse("")
 
 
-def questions_api(request:HttpRequest)->JsonResponse:
+def questions_api(request:HttpRequest)->Union[JsonResponse,HttpResponse]:
     """API handling all questions. GET request returns JSON of all objects. POST request adds new question record and returns it."""
     if request.method == 'GET':
         return JsonResponse({
@@ -276,8 +263,8 @@ def questions_api(request:HttpRequest)->JsonResponse:
         })
 
     elif request.method == 'POST':
-        data = json.loads(request.body)
-        # data = body["data"]
+        body = json.loads(request.body)
+        data = body["data"]
         title = data["title"]
         description = data["description"]
         response = data["response"]
@@ -290,8 +277,10 @@ def questions_api(request:HttpRequest)->JsonResponse:
         question = Question.objects.create(title=title, description=description,response=response,item=item,questioner=questioner)
         return JsonResponse(question.to_dict())
 
+    return HttpResponse("")
 
-def item_questions_api(request:HttpRequest, itemID:int)->JsonResponse:
+
+def item_questions_api(request:HttpRequest, itemID:int)->Union[JsonResponse,HttpResponse]:
     """API returning questions for the ID of the given item."""
     if request.method == 'GET':
         givenItem = get_object_or_404(Item, id=itemID)
@@ -302,11 +291,13 @@ def item_questions_api(request:HttpRequest, itemID:int)->JsonResponse:
             ]
         })
     
+    return HttpResponse("")
 
-def item_bids_api(request:HttpRequest, itemID:int)->JsonResponse:
+def item_bids_api(request:HttpRequest, itemID:int)->Union[JsonResponse,HttpResponse]:
     """API returning bids for the ID of the given item"""
     if request.method == 'GET':
         givenItem = get_object_or_404(Item, id=itemID)
+        
         return JsonResponse({
           'bids': [
             bid.to_dict()
@@ -314,8 +305,9 @@ def item_bids_api(request:HttpRequest, itemID:int)->JsonResponse:
           ]  
         })
 
+    return HttpResponse("")
 
-def question_api(request:HttpRequest, questionID:int)->JsonResponse:
+def question_api(request:HttpRequest, questionID:int)->Union[JsonResponse,HttpResponse]:
     """API handling individual question, an integer ID of the question must be passed. GET returns question with ID specified. DELETE removes question with ID specified. PUT updates question with ID specified."""
     question = get_object_or_404(Question, id=questionID)
 
@@ -329,7 +321,8 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
 
     elif request.method == "PUT":
         #Data is retrieved from request body
-        data = json.loads(request.body)
+        body = json.loads(request.body)
+        data = body["data"]
         title = data["title"]
         description = data["description"]
         response = data["response"]
@@ -354,7 +347,7 @@ def question_api(request:HttpRequest, questionID:int)->JsonResponse:
     return HttpResponse("")
 
 
-def profileImage_api(request: HttpRequest, userID : int)->JsonResponse:        
+def profileImage_api(request: HttpRequest, userID : int)->Union[JsonResponse,HttpResponse]:        
     """API handling of profile picture."""
     user = get_object_or_404(User, id=userID)
     if request.method == 'POST':
@@ -364,11 +357,12 @@ def profileImage_api(request: HttpRequest, userID : int)->JsonResponse:
 
         return JsonResponse({
             'filename' : uploaded_file.name,
+
         })
 
     return HttpResponse("")
     
-def registerPage(request):
+def registerPage(request:HttpRequest)->Union[HttpResponseRedirect,HttpResponse]:
     context = {}
     if request.POST:
         form = RegistrationForm(request.POST)
@@ -386,30 +380,8 @@ def registerPage(request):
         context['registration_form'] = form
     return render(request, 'accounts/register.html', context)
 
-@csrf_exempt
-def loginPage(request):
-    context = {}
-    
-    # user = request.user
-    # if user.is_authenticated:
-    #     return redirect('register')
-    
-    # if request.POST:
-    #     form = AccountAuthenticationForm(request.POST)
-    #     if form.is_valid():
-    #         email = request.POST['email']
-    #         password = request.POST['password']
-    #         user = authenticate(request, email=email, password=password)
-            
-    #         if user:
-    #             login(request, user)
-    #             return redirect('register')
-    # else:
-    #     form = AccountAuthenticationForm()
-        
-    # context['login_form'] = form
-    # return render(request, 'accounts/login.html', context)
-    
+def loginPage(request:HttpRequest)->Union[HttpResponse, HttpResponseRedirect]:
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -425,9 +397,9 @@ def loginPage(request):
             # return response
             
         
-    return render(request, 'accounts/login.html', context)
+    return render(request, 'accounts/login.html', {})
 
-def logout_view(request):
+def logout_view(request:HttpRequest)->HttpResponseRedirect:
     logout(request)
-    return redirect('login')
+    return redirect('register')
 
