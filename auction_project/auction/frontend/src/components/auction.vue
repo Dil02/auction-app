@@ -26,7 +26,7 @@ export default {
       items: [],
     };
   },
-  async mounted() {
+  async mounted(): Promise<void> {
     this.getSession();
     let response = await fetch("http://127.0.0.1:8000/api/available/");
     let data = await response.json();
@@ -34,7 +34,7 @@ export default {
 
   },
   methods: {
-    async fetchItems(query = "") {
+    async fetchItems(query = ""): Promise<void> {
       let response;
 
       if (query == "")
@@ -46,7 +46,7 @@ export default {
       this.items = data.items;
     },
 
-    async searchItems() {
+    async searchItems(): Promise<void> {
       let givenElement = document.getElementById("searchBar") as HTMLInputElement
       let query;
       if (givenElement == null) {
@@ -56,7 +56,7 @@ export default {
       this.fetchItems(query);
     },
 
-    async getSession() {
+    async getSession(): Promise<void> {
       let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
       let data = await response.json();
       if (data.User == "None") {

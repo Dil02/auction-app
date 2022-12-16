@@ -60,13 +60,13 @@ export default {
     components: {
         bidComponent, questionAnswer
     },
-    data() {
+    data(){
         return {
-            item: null as null|Item ,
-            owner: null as null|Owner,
+            item: null as null | Item,
+            owner: null as null | Owner,
         };
     },
-    async mounted() {
+    async mounted():Promise<void>{
         this.getSession();
         let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id, { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" });
         let data = await response.json();
@@ -76,10 +76,14 @@ export default {
 
     },
     methods: {
-        async getSession() {
+        async getSession():Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             let data = await response.json();
-            this.owner = data.User 
+            if (data.User == "None") {
+                window.location.href = "http://127.0.0.1:8000/login/"
+            }
+            this.owner = data.User
+
         },
     }
 }

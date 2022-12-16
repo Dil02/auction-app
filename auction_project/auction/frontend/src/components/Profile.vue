@@ -61,7 +61,7 @@
 
 <script lang="ts">
 
-function getCookie(name: String) {
+function getCookie(name: String):string {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -92,11 +92,11 @@ export default {
 
         }
     },
-    mounted() {
+    mounted():void{
         this.fetchUserDetails();
     },
     methods: {
-        async updateUserDetails() {
+        async updateUserDetails() :Promise<void>{
             //Performs an Ajax PUT request to update a user's profile.
             let givenUser = document.getElementById("profileUsername") as HTMLInputElement
             let givenFname = document.getElementById("profileFirstName") as HTMLInputElement
@@ -130,7 +130,7 @@ export default {
             this.fetchUserDetails();
         },
 
-        async updateUserPicture() {
+        async updateUserPicture():Promise<void>{
             const formData = new FormData()
             let fileField = document.querySelector("#profileInput") as HTMLInputElement;
 
@@ -151,7 +151,7 @@ export default {
             let data = await response.json();
         },
 
-        async fetchUserDetails() {
+        async fetchUserDetails():Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             let data = await response.json();
             let record = data.User
