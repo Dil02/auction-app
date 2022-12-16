@@ -152,6 +152,8 @@ def emailWinners(request:HttpRequest)->HttpResponse:
                 [winner.email],
                 fail_silently=False,
             )
+            item.sold = True
+            item.save()
 
     return HttpResponse("Finished")
 
