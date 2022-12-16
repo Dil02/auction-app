@@ -194,6 +194,7 @@ export default {
     margin: auto;
     margin-bottom: 2em !important;
     margin-right: auto !important;
+    border-radius:1em;
 }
 
 .description {

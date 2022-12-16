@@ -1,11 +1,12 @@
 <template>
-    <div>
-        <h1>Questions And Answer</h1>
+    <div class="itemBox">
         <!-- Display All questions with the response -->
+        <div class="itemBox">
+        <h1 class="mx-auto text-align-center w-100 ">Questions And Answer</h1>
         <div v-for="(q, index) in questions" class="question border rounded  pb-3 mb-3 ml-2  me-5" :key="index">
-            <div>
+            <div class="">
                 <h3 class="title">{{ q.title }}</h3>
-                <h5>Question: {{ q.description }}</h5>
+                <h5>Description: {{ q.description }}</h5>
                 <h5>Answer: {{ q.response }} </h5>
                 <!-- OWNERID ==user ID IF THIS IS TRUE OUTPUT A BUTTON TO ADD ANSWER! -->
                 <div v-show='(check == false)'>
@@ -21,16 +22,17 @@
                 </div>
 
             </div>
+            </div>
         </div>
         <!-- IF USERID !=OWNER THEN HAVE A BUTTON TO POST A QUESTION (SMALL FORM BOOOM) -->
 
         <div v-if="check">
-            <form v-on:submit.prevent="SaveQuestion" class="sq d-flex flex-column justify-content-center mx-auto w-50">
-                <h2>Add Question</h2>
+            <form v-on:submit.prevent="SaveQuestion" class="sq d-flex flex-column justify-content-center mx-auto w-50 p-3">
+                <h2 class="q-t">Add Question</h2>
                 <div class="form-input">
                     <h3>
                         <label class="form-label" for="title">Title</label>
-                        <input v-model="title" type="text" class="form-control w-100"
+                        <input v-model="title" type="text" class="form-control w-100 text"
                             placeholder="Enter question title">
                     </h3>
                 </div>
@@ -167,6 +169,7 @@ export default {
 </script>
 
 <style scoped>
+
 .title {
     font-weight: bold;
     color: rgb(30, 166, 251);
@@ -175,15 +178,37 @@ export default {
 }
 
 .question {
+    justify-content: space-evenly;
     color: white;
-    background-color: #312c2c;
+    background-color: #141313;
+    width:55em;
+    margin: auto auto;
+    display:flex;
 
 }
 
 .sq {
-    color: white;
-    background-color: #312c2c;
+    color: rgb(0, 0, 0);
+    background-color: #ffffff;
     border-radius: 3%;
     margin-bottom: 2%;
+}
+.itemBox {
+    border-color: solid  #008148 !important;
+    background-color: #212529 !important;
+    height: auto;
+    color: white;
+    text-align: center;
+    display:flex;
+    justify-content:center;
+    flex-direction: column;
+    gap:5;
+    border-radius:1em;
+}
+.q-t{
+    text-align: center
+}
+#Desc ,.text{
+    border:solid;
 }
 </style>
