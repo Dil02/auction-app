@@ -18,8 +18,8 @@
             </div>
             <div class="form-input">
                 <h3><label class="form-label" for="price">Set Price</label></h3>
-                <input v-model="price" type="number" step=".01" class="form-control" placeholder="Enter value" name="value"
-                    id="itemValue">
+                <input v-model="price" type="number" step=".01" class="form-control" placeholder="Enter value"
+                    name="value" id="itemValue">
             </div>
             <div class="form-group">
                 <h3><label for="options">Select Condition</label></h3>
@@ -92,17 +92,6 @@ export default {
 
     methods: {
         async saveNewObject(): Promise<void> {
-            // const item = JSON.stringify({
-            //     name: this.name,
-            //     condition: this.condition,
-            //     price: this.price,
-            //     description: this.desc,
-            //     start: this.start,
-            //     end: this.end,
-            //     sold: false,
-            //     picture: this.picture,
-            // })
-
             const formData = new FormData()
             let fileField = document.querySelector("#itemImage") as HTMLInputElement;
 
@@ -132,14 +121,6 @@ export default {
             this.$router.push('/')
 
         },
-
-        // async storeImage(e) {
-        //     const file = e.target.files[0];
-        //     this.prev = URL.createObjectURL(file);  //creates a blob image (to preview image)
-        //     var reader = new FileReader();
-        //     this.picture = await new Response(this.prev).text()  // changes blob to string (to store)
-
-        // },
 
         async getSession(): Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })

@@ -34,7 +34,7 @@ export default {
 
   },
   methods: {
-    async fetchItems(query = ""): Promise<void> {
+    async fetchItems(query: string = ""): Promise<void> {
       let response;
 
       if (query == "")

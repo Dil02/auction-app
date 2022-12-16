@@ -10,11 +10,7 @@ from datetime import date
 from datetime import datetime
 from django.core.mail import send_mail
 from typing import Union, Optional
-# Create your views here.
 
-#Note : 1. get_object_or_404 will mean 404 will happen if an object can't be found with its ID
-#       2. Need to check if Username passwords are automatically hashed by abstract user or if they want us to do it, they're already hashed from looking at the admin page
-#       3. Add/Change stuff in Post/Put to make inputs work (sometimes dates/time recieved needs to be formatted before database accepts it)
 
 
 def users_api(request : HttpRequest) ->Union[JsonResponse,HttpResponse]:
@@ -37,9 +33,6 @@ def users_api(request : HttpRequest) ->Union[JsonResponse,HttpResponse]:
         sname = data["sname"]
         city=data["city"]
         dob=data["dob"]
-        #image = data["image"]
-        print("this ran")
-    # Create a model instance and set the value of the image field
         user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname,city=city,dob=dob)
         user.save()
         return JsonResponse(user.to_dict())
@@ -159,6 +152,8 @@ def emailWinners(request:HttpRequest)->HttpResponse:
                 [winner.email],
                 fail_silently=False,
             )
+            item.sold = True
+            item.save()
 
     return HttpResponse("Finished")
 
