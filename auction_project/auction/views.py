@@ -8,6 +8,7 @@ import json
 from .models import *
 from datetime import date
 from datetime import datetime
+from django.core.mail import send_mail
 from typing import Union, Optional
 # Create your views here.
 
@@ -133,6 +134,29 @@ def items_api(request : HttpRequest)->Union[JsonResponse,HttpResponse]:
         })
 
     return HttpResponse("")
+
+def emailWinners(request:HttpRequest)->HttpResponse:
+    #Retrieve items that end today
+    today = datetime.now().strftime('%Y-%m-%d')
+    items = Item.objects.filter(end=today)
+
+    #
+    for item in items:
+        latest_bid = Bid.objects.filter(item=item).order_by('-time').first()
+        if latest_bid != None:
+            print(latest_bid)
+            winner = latest_bid.bidder
+            send_mail(
+                'Auction Winner',
+                'Congratulations, You have won the auction for "{}"'.format(item.name),
+                'group7auction@gmail.com',
+                [winner.email],
+                fail_silently=False,
+            )
+
+    return HttpResponse("Finished")
+
+
 
 def item_api(request : HttpRequest, itemID : int)->Union[JsonResponse,HttpResponse]:
     """API handling individual item, an integer ID of the item must be passed. GET returns item with ID specified. DELETE removes item with ID specified. PUT updates item with ID specified."""

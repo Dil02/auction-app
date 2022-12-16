@@ -34,4 +34,8 @@ urlpatterns = [
 
     #Profile paths
     path('api/profile/<int:userID>/', views.profileImage_api, name="profile"),
+
+    #Send mail test
+    path('mail/', views.emailWinners, name="mail"),
+
 ]
