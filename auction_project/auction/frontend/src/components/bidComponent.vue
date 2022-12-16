@@ -39,7 +39,7 @@
 </template>
   
 <script lang="ts">
-function getCookie(name: String) {
+function getCookie(name: String): string {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -83,13 +83,13 @@ export default {
             latestPrice: 0,
         };
     },
-    async mounted() :Promise<void> {
+    async mounted(): Promise<void> {
         this.available()
         this.displayBids();
     },
     methods: {
 
-        async processBid():Promise<void> {
+        async processBid(): Promise<void> {
             let givenElement = document.getElementById("newBid") as HTMLInputElement
             let givenBid;
             if (givenElement == null) {
@@ -140,13 +140,13 @@ export default {
 
 
         },
-        async displayBids() :Promise<void>{
+        async displayBids(): Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/bids");
             let data = await response.json();
             this.bids = data.bids;
         },
 
-        async available():Promise<void> {
+        async available(): Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id);
             let data = await response.json();
             let record = data.item;

@@ -62,8 +62,8 @@ export default {
     },
     data() {
         return {
-            item: null as null|Item ,
-            owner: null as null|Owner,
+            item: null as null | Item,
+            owner: null as null | Owner,
         };
     },
     async mounted() {
@@ -79,7 +79,11 @@ export default {
         async getSession() {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             let data = await response.json();
-            this.owner = data.User 
+            if (data.User == "None") {
+                window.location.href = "http://127.0.0.1:8000/login/"
+            }
+            this.owner = data.User
+
         },
     }
 }
