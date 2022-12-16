@@ -4,15 +4,15 @@
         <div class="itemBox">
         <h1 class="mx-auto text-align-center w-100 ">Questions And Answer</h1>
         <div v-for="(q, index) in questions" class="question border rounded  pb-3 mb-3 ml-2  me-5" :key="index">
-            <div class="">
-                <h3 class="title">{{ q.title }}</h3>
-                <h5>Description: {{ q.description }}</h5>
-                <h5>Answer: {{ q.response }} </h5>
+            <div class="w-75">
+                <h3 class="title w-100">{{ q.title }}</h3>
+                <h5 class="w-100">Description: {{ q.description }}</h5>
+                <h5 class="w-100">Answer: {{ q.response }} </h5>
                 <!-- OWNERID ==user ID IF THIS IS TRUE OUTPUT A BUTTON TO ADD ANSWER! -->
                 <div v-show='(check == false)'>
                     <div v-if="q.response == '' || q.response == null">
                         <form v-on:submit.prevent="updateQuestion(q.id, q, index)"
-                            class="sq d-flex-inline flex-column justify-content-center mx-auto w-50 inline">
+                            class="sq d-flex-inline flex-column justify-content-center mx-auto w-100 inline">
                             <div><textarea v-model="response[index]" class="form-control w-75 ml-auto mx-auto"
                                     rows="4"></textarea></div>
                             <div><button type="submit" class="btn btn-primary  w-75 pt-2 w-50 mb-3 mx-auto mt-2 d-block"
