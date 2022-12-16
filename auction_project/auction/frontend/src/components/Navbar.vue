@@ -5,6 +5,9 @@
             <span class="navbar-brand mb-0 h1"><router-link to="/">Auction</router-link></span>
                 <ul class="navbar-nav">
                     <li class="nav-item">
+                        <div class="nav-link"><router-link to="/">Home</router-link></div>
+                    </li>
+                    <li class="nav-item">
                         <div class="nav-link"><router-link to="/item">Add Item</router-link></div>
                     </li>
 
