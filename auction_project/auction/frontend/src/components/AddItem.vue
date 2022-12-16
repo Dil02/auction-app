@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-function getCookie(name: String) {
+function getCookie(name: String): string {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -86,12 +86,12 @@ export default {
 
         }
     },
-    async mounted() {
+    async mounted(): Promise<void> {
         this.getSession();
     },
 
     methods: {
-        async saveNewObject() {
+        async saveNewObject(): Promise<void> {
             // const item = JSON.stringify({
             //     name: this.name,
             //     condition: this.condition,
@@ -123,7 +123,7 @@ export default {
                 mode: "cors",
                 referrerPolicy: "no-referrer",
                 headers: {
-                    // 'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie("csrftoken"),
                 },
                 body: formData,
@@ -141,7 +141,7 @@ export default {
 
         // },
 
-        async getSession() {
+        async getSession(): Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             let data = await response.json();
             if (data.User == "None") {

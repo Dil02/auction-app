@@ -55,7 +55,7 @@ type Question = {
     response: String;
     id: Number;
 };
-function getCookie(name: String) {
+function getCookie(name: String): string {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -87,26 +87,24 @@ export default {
     },
     methods: {
 
-        async fetch_item() {
+        async fetch_item(): Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id);
             let data = await response.json();
             this.item = data.item;
             this.ownerId = data.item.owner.id;
         },
-        async fetch_questions() {
+        async fetch_questions(): Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/items/" + this.$route.params.id + "/questions", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" });  // NEED to add itemID so it can get all questions from a specific item  (need to add the view for it still)
             let data = await response.json();
             this.questions = data.questions;
         },
         //Gets The userID  THAT IS CURRENTLY LOGGED IN!
-        async fetch_user() {
+        async fetch_user(): Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             const data = await response.json();
             this.userId = data.User.id;
-            console.log(this.item)
-            console.log("the userID is" + this.userId)
         },
-        async SaveQuestion() {
+        async SaveQuestion(): Promise<void> {
             const question = JSON.stringify({
                 title: this.title,
                 description: this.description,
@@ -126,15 +124,14 @@ export default {
             })
             this.fetch_questions();
         },
-        async updateQuestion(id: Number, q: Question, index: number) {
+        async updateQuestion(id: Number, q: Question, index: number): Promise<void> {
             const question = JSON.stringify({
                 title: q.title,
                 description: q.description,
                 item: this.$route.params.id,
                 response: this.response[index],
             })
-            console.log("the title is " + q.title)
-            console.log(q);
+
             let response = await fetch("http://127.0.0.1:8000/api/questions/" + id + "/", {
                 method: 'PUT',
                 credentials: "include",
@@ -149,13 +146,13 @@ export default {
             this.fetch_questions();
         },
     },
-    async mounted() {
+    async mounted(): Promise<void> {
         this.fetch_item();
         this.fetch_user();
         this.fetch_questions();
     },
     computed: {
-        check: function () {
+        check: function (): boolean {
             console.log("C " + this.userId)
             console.log("C " + this.ownerId)
             if (this.userId == this.ownerId) {
