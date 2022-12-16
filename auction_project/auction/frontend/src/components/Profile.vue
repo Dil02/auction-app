@@ -143,7 +143,6 @@ export default {
 
             if (fileField.files && fileField.files.length > 0) {
                 formData.append('myFile', fileField.files[0])
-                console.log(fileField.files[0])
             }
 
             let response = await fetch("http://127.0.0.1:8000/api/profile/" + this.id + "/", {
