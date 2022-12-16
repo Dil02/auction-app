@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <img v-bind:src="'http://localhost:8000' + picture" height="350" width="350" alt="Press 'View Profile'">
+                <img v-bind:src="picture" height="350" width="350" alt="Press 'View Profile'">
 
                 <form method="POST" enctype="multipart/form-data" class="mt-2" @submit.prevent="updateUserPicture()">
                     <input type="file" accept="image/*" name="myFile" id="profileInput">
@@ -92,7 +92,7 @@ export default {
             city: null as null | string,
             email: null as null | string,
             id: null as null | string,
-            picture: null as null | string,
+            picture: "./media/profileImages/default.png" as string,
             invalidInput: false,
             validInput: false,
         }
@@ -143,6 +143,7 @@ export default {
 
             if (fileField.files && fileField.files.length > 0) {
                 formData.append('myFile', fileField.files[0])
+                console.log(fileField.files[0])
             }
 
             let response = await fetch("http://127.0.0.1:8000/api/profile/" + this.id + "/", {
@@ -173,7 +174,7 @@ export default {
             this.city = record.city;
             this.email = record.email;
             this.id = record.id;
-            this.picture = record.picture;
+            this.picture = "http://localhost:8000" + record.picture;
 
         },
     }

@@ -59,6 +59,12 @@
 			box-shadow: none !important;
 			outline: 0px !important;
 		}
+        .wide-input {
+            width: 275px;
+        }
+        input::placeholder {
+            margin-left: 10px;
+          }
     </style>
 
     {% if request.user.is_authenticated %}

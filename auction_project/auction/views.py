@@ -35,7 +35,12 @@ def users_api(request : HttpRequest) ->Union[JsonResponse,HttpResponse]:
         email = data["email"]
         fname = data["fname"]
         sname = data["sname"]
-        user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname)
+        city=data["city"]
+        dob=data["dob"]
+    # Create a model instance and set the value of the image field
+        user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname,city=city,dob=dob)
+        user.picture.name="default.png"
+        user.save()
         return JsonResponse(user.to_dict())
 
     return HttpResponse("")
@@ -401,7 +406,8 @@ def registerPage(request:HttpRequest)->Union[HttpResponseRedirect,HttpResponse]:
             raw_password = form.cleaned_data.get('password1')
             #account = authenticate(email=email1, password=raw_password)
             login(request, account)
-            return redirect('register')
+            response = redirect('http://127.0.0.1:5173/')          
+            return response
         else:
             context['registration_form'] = form
     else:
