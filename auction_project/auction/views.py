@@ -37,9 +37,10 @@ def users_api(request : HttpRequest) ->Union[JsonResponse,HttpResponse]:
         sname = data["sname"]
         city=data["city"]
         dob=data["dob"]
+        #image = data["image"]
+        print("this ran")
     # Create a model instance and set the value of the image field
         user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname,city=city,dob=dob)
-        user.picture.name="default.png"
         user.save()
         return JsonResponse(user.to_dict())
 
@@ -399,7 +400,7 @@ def profileImage_api(request: HttpRequest, userID : int)->Union[JsonResponse,Htt
 def registerPage(request:HttpRequest)->Union[HttpResponseRedirect,HttpResponse]:
     context = {}
     if request.POST:
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST,request.FILES)
         if form.is_valid():
             account = form.save()
             email1 = form.cleaned_data.get('email')

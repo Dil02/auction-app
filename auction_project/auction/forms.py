@@ -17,13 +17,22 @@ class RegistrationForm(UserCreationForm):
     dob = forms.DateField(
         widget=forms.DateInput(format='%Y-%m-%d',attrs={'type': 'date'}),
         input_formats=['%Y-%m-%d']
-    ) 
+    )
+
+    first_name=forms.CharField(label='fname', max_length=100,
+                               widget=forms.TextInput(attrs={'placeholder': 'Enter a first name', 'class': 'wide-input'}))
+
+    last_name=forms.CharField(label='sname', max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Enter your second name', 'class': 'wide-input'}))
+
+
     city=forms.CharField(label='city', max_length=100,
                                widget=forms.TextInput(attrs={'placeholder': 'Enter a city', 'class': 'wide-input'}))
-                               
+    
+    picture=forms.ImageField(label='picture')
+
     class Meta:
         model = User
-        fields = ("email", "username", "password1", "password2","dob","city")
+        fields = ("email", "username", "password1", "password2","first_name","last_name","dob","city","picture")
         
 class AccountAuthenticationForm(forms.ModelForm):
     
