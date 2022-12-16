@@ -50,6 +50,8 @@
             <button type="submit" class="btn btn-primary mt-4 pt-2 w-50 mb-3" id="b">Submit</button>
 
         </form>
+
+
     </div>
 </template>
 
@@ -82,8 +84,6 @@ export default {
             start: null,
             end: null,
             desc: "",
-
-
         }
     },
     async mounted(): Promise<void> {
@@ -123,7 +123,7 @@ export default {
                 mode: "cors",
                 referrerPolicy: "no-referrer",
                 headers: {
-                    'Content-Type': 'application/json',
+                    //'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie("csrftoken"),
                 },
                 body: formData,

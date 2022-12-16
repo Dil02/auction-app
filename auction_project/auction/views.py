@@ -9,7 +9,6 @@ from .models import *
 from datetime import date
 from datetime import datetime
 from typing import Union, Optional
-from django.contrib import messages
 # Create your views here.
 
 #Note : 1. get_object_or_404 will mean 404 will happen if an object can't be found with its ID
@@ -112,19 +111,26 @@ def items_api(request : HttpRequest)->Union[JsonResponse,HttpResponse]:
         })
 
     elif request.method == 'POST':
-        data = json.loads(request.body)
-        name = data["name"]
-        description = data["description"]
-        condition = data["condition"]
-        price = data["price"]
-        start = data["start"]
-        end = data["end"]
-        picture = data["picture"]
-        sold = data["sold"]
+        name = request.POST["name"]
+        description = request.POST["description"]
+        condition = request.POST["condition"]
+        price = request.POST["price"]
+        start = request.POST["startDate"]
+        end = request.POST["endDate"]
         userId = request.session.get('_auth_user_id')
-        owner = get_object_or_404(User, id=userId)   
-        item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, picture=picture, sold=sold, owner=owner)
-        return JsonResponse(item.to_dict())
+        owner = get_object_or_404(User, id=userId)
+
+        item = Item.objects.create(name=name, description=description, condition=condition, price=price, start=start, end=end, owner=owner)
+
+        uploaded_file = request.FILES['myFile']
+        item.picture=uploaded_file
+        item.save()
+
+        return JsonResponse({
+            'item': [
+                item.to_dict()
+            ]
+        })
 
     return HttpResponse("")
 
@@ -394,11 +400,9 @@ def loginPage(request:HttpRequest)->Union[HttpResponse, HttpResponseRedirect]:
             # response = HttpResponse()
             # response.headers['userID']= request.session.get('_auth_user_id')
             # return response
-        else:
-            messages.info(request, 'Invalid username or password')
-    return render(request, 'accounts/login.html',{})
             
         
+    return render(request, 'accounts/login.html', {})
 
 def logout_view(request:HttpRequest)->HttpResponseRedirect:
     logout(request)

@@ -57,11 +57,15 @@
             </div>
         </div>
     </div>
+
+    <p class="errorMsg bold" v-if="invalidInput">Error occurred. Please check your inputs.</p>
+    <p class="successMsg bold" v-if="validInput">Your profile has been successfully updated.</p>
+
 </template>
 
 <script lang="ts">
 
-function getCookie(name: String):string {
+function getCookie(name: String): string {
     let cookieValue = "";
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -88,15 +92,16 @@ export default {
             city: null as null | string,
             email: null as null | string,
             id: null as null | string,
-            picture: null as null | string
-
+            picture: null as null | string,
+            invalidInput: false,
+            validInput: false,
         }
     },
-    mounted():void{
+    mounted(): void {
         this.fetchUserDetails();
     },
     methods: {
-        async updateUserDetails() :Promise<void>{
+        async updateUserDetails(): Promise<void> {
             //Performs an Ajax PUT request to update a user's profile.
             let givenUser = document.getElementById("profileUsername") as HTMLInputElement
             let givenFname = document.getElementById("profileFirstName") as HTMLInputElement
@@ -127,10 +132,12 @@ export default {
                 })
             })
             let data = await response.json();
+            this.validInput = true;
+            this.invalidInput = false;
             this.fetchUserDetails();
         },
 
-        async updateUserPicture():Promise<void>{
+        async updateUserPicture(): Promise<void> {
             const formData = new FormData()
             let fileField = document.querySelector("#profileInput") as HTMLInputElement;
 
@@ -149,9 +156,13 @@ export default {
                 body: formData,
             })
             let data = await response.json();
+            this.validInput = true;
+            this.invalidInput = false;
+            this.fetchUserDetails();
+
         },
 
-        async fetchUserDetails():Promise<void> {
+        async fetchUserDetails(): Promise<void> {
             let response = await fetch("http://127.0.0.1:8000/api/sessionUser/", { credentials: "include", mode: "cors", referrerPolicy: "no-referrer" })
             let data = await response.json();
             let record = data.User
@@ -171,3 +182,18 @@ export default {
 import 'bootstrap/dist/css/bootstrap.css';
 
 </script>
+
+<style>
+.errorMsg {
+    color: red;
+}
+
+.successMsg {
+    color: green;
+}
+
+.bold {
+    font-weight: bolder;
+    text-align: center;
+}
+</style>

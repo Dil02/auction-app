@@ -155,8 +155,6 @@ export default {
     },
     computed: {
         check: function (): boolean {
-            console.log("C " + this.userId)
-            console.log("C " + this.ownerId)
             if (this.userId == this.ownerId) {
                 return false;
             }

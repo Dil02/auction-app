@@ -5,13 +5,14 @@ from django.contrib.auth import authenticate
 from auction.models import User
 
 class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(max_length=255, help_text="Required", widget=forms.EmailInput(attrs={'placeholder': 'Enter your email'}))
+    email = forms.EmailField(max_length=255, help_text="Required", widget=forms.EmailInput(attrs={'placeholder': 'Enter your email', 
+                                                                                                  'class': 'wide-input'}))
     username = forms.CharField(label='Username', max_length=100,
-                               widget=forms.TextInput(attrs={'placeholder': 'Enter a username'}))
+                               widget=forms.TextInput(attrs={'placeholder': 'Enter a username', 'class': 'wide-input'}))
     password1 = forms.CharField(label='Password1', max_length=100,
-                               widget=forms.PasswordInput(attrs={'placeholder': 'Enter a password'}))
+                               widget=forms.PasswordInput(attrs={'placeholder': 'Enter a password', 'class': 'wide-input'}))
     password2 = forms.CharField(label='Password2', max_length=100,
-                               widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your password'}))
+                               widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your password', 'class': 'wide-input'}))
     
     class Meta:
         model = User
