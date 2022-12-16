@@ -8,6 +8,7 @@ import json
 from .models import *
 from datetime import date
 from datetime import datetime
+from django.core.mail import send_mail
 from typing import Union, Optional
 # Create your views here.
 
@@ -36,9 +37,10 @@ def users_api(request : HttpRequest) ->Union[JsonResponse,HttpResponse]:
         sname = data["sname"]
         city=data["city"]
         dob=data["dob"]
+        #image = data["image"]
+        print("this ran")
     # Create a model instance and set the value of the image field
         user = User.objects.create(username=username, password=password, email=email, fname=fname, sname=sname,city=city,dob=dob)
-        user.picture.name="default.png"
         user.save()
         return JsonResponse(user.to_dict())
 
@@ -138,6 +140,29 @@ def items_api(request : HttpRequest)->Union[JsonResponse,HttpResponse]:
         })
 
     return HttpResponse("")
+
+def emailWinners(request:HttpRequest)->HttpResponse:
+    #Retrieve items that end today
+    today = datetime.now().strftime('%Y-%m-%d')
+    items = Item.objects.filter(end=today)
+
+    #
+    for item in items:
+        latest_bid = Bid.objects.filter(item=item).order_by('-time').first()
+        if latest_bid != None:
+            print(latest_bid)
+            winner = latest_bid.bidder
+            send_mail(
+                'Auction Winner',
+                'Congratulations, You have won the auction for "{}"'.format(item.name),
+                'group7auction@gmail.com',
+                [winner.email],
+                fail_silently=False,
+            )
+
+    return HttpResponse("Finished")
+
+
 
 def item_api(request : HttpRequest, itemID : int)->Union[JsonResponse,HttpResponse]:
     """API handling individual item, an integer ID of the item must be passed. GET returns item with ID specified. DELETE removes item with ID specified. PUT updates item with ID specified."""
@@ -375,7 +400,7 @@ def profileImage_api(request: HttpRequest, userID : int)->Union[JsonResponse,Htt
 def registerPage(request:HttpRequest)->Union[HttpResponseRedirect,HttpResponse]:
     context = {}
     if request.POST:
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST,request.FILES)
         if form.is_valid():
             account = form.save()
             email1 = form.cleaned_data.get('email')

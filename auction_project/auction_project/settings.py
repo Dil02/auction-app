@@ -54,6 +54,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'group7auction@gmail.com'
+EMAIL_HOST_PASSWORD = 'htmhvqojjnrwmviv'
+EMAIL_USE_TLS = True
+
 CORS_ALLOWED_ORIGINS=[
     "http://127.0.0.1:5173",
     "http://localhost:5173",
