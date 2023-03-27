@@ -7,7 +7,7 @@ Dilkush Pemji Punja : Worked on the profile page and making images work in all p
 
 Syed Hasnain Jaffery : Worked on the Django templates responsible for authenticating users and creating them.
 
-URL : 
+URL : https://group7-web-apps-ec20293.apps.d.comp-teach.qmul.ac.uk/
 
 Admin Account :
 Username : admin 
@@ -18,3 +18,20 @@ password : test
 
 
 Test Accounts :
+user:user1
+pass:Random234
+
+user:Test1
+pass:Random234
+
+user:Ten
+pass:Random567
+
+user:hp
+pass:Random909
+
+user:bnq
+pass:Random2348
+
+user:Tenz
+pass:Random23486
