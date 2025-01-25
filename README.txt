@@ -27,6 +27,8 @@ Frontend Development Server:
 2. Using your terminal environment navigate to the 'frontend' directory and enter 'npm install' followed by 'npm run dev'.
 3. Use a web browser to navigate to the local address once the development server is running.
 
+NOTE: You may have to add the '--host' flag into package.json: https://stackoverflow.com/questions/75500284/vite-application-works-on-localhost5173-but-not-on-127-0-0-15173
+
 Backend Development Server:
 
 1. Install Django and check version using 'python -m django --version'. 
